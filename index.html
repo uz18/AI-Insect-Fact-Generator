@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" href="https://em-content.zobj.net/source/apple/271/robot_1f916.png">
+    <title>Insect Fact Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .chat-box {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 20px;
+            position: relative;
+        }
+        #fact {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        #cursor {
+            display: inline-block;
+            width: 5px;
+            height: 1em;
+            background-color: black;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        #image {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #loading {
+    display: none;
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+}
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#progress-bar {
+    width: 25%;
+    margin-top: 10px;
+}
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Insect Fact Generator</h1>
+        <div class="chat-box">
+            <div id="fact"></div>
+            <div id="cursor"></div>
+        </div>
+        <div id="image"></div>
+        <div id="loading">
+            <p>Generating Insect Fact</p>
+            <progress id="progress-bar" max="100" value="0"></progress>
+        </div>
+        <button id="generate-btn" onclick="generateFact()">Generate Fact</button>
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()">Generate a Different Fact</button>
+    </div>
+
+    <script>
+        let previousFacts = [];
+
+         // Load previous facts from localStorage on page load
+        window.addEventListener('load', function() {
+            const storedFacts = localStorage.getItem('previousFacts');
+            if (storedFacts) {
+                previousFacts = JSON.parse(storedFacts);
+            }
+        });
+        function generateFact() {
+            const apiUrl = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
+            const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
+            let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+            // Append previously generated facts to the prompt
+            for (let i = 0; i < previousFacts.length; i++) {
+                prompt += ` ${previousFacts[i]}</s>`;
+            }
+            prompt += ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('fact').innerHTML = '';
+            document.getElementById('image').innerHTML = '';
+            document.getElementById('generate-btn').style.display = 'none';
+
+            // Start the progress bar
+            const maxTime = 2000;
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+            const increment = 100 / maxTime;
+            progressTimer = setInterval(() => {
+                progress += increment;
+                progressBar.value = progress;
+                if (progress >= 100) {
+                    clearInterval(progressTimer);
+                }
+            },
+            generateResponse(apiUrl, headers, prompt, ''));
+        }
+
+        function regenerateFact() {
+            const apiUrl = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
+            const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
+            let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+            // Append previously generated facts to the prompt
+            for (let i = 0; i < previousFacts.length; i++) {
+                prompt += ` ${previousFacts[i]}</s>`;
+            }
+
+            // Append the original prompt without the <s> tag
+            prompt += ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('fact').innerHTML = '';
+            document.getElementById('image').innerHTML = '';
+            document.getElementById('regenerate-btn').style.display = 'none';
+
+            // Start the progress bar
+            const maxTime = 200;
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+            const increment = 100 / maxTime;
+            progressTimer = setInterval(() => {
+                progress += increment;
+                progressBar.value = progress;
+                if (progress >= 100) {
+                    clearInterval(progressTimer);
+                }
+            }, 100);
+
+            generateResponse(apiUrl, headers, prompt, '');
+        }
+
+        function generateResponse(apiUrl, headers, prompt, previousResponse) {
+            axios.post(apiUrl, {"inputs": prompt,"parameters":{"return_full_text":false,"temperature":1,"max_new_tokens":250},"options":{"dont_load_model":true,"signal":{},"use_cache":false,"wait_for_model":true}}, { headers: headers })
+                .then(response => {
+                    const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
+                    const fact = previousResponse + generatedText;
+                    previousFacts.push(fact);
+                    // Store previous facts in localStorage
+                    localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                    typeText(generatedText.substring(0, generatedText.lastIndexOf('.')+1));
+                    if (response.data[0].finish_reason === 'length') {
+                        console.log("BLEHA")
+                    } else {
+                        document.getElementById('loading').style.display = 'none';
+                        generateImage(fact);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function typeText(text) {
+            let index = 0;
+            const speed = 20;
+            const typingEffect = () => {
+                if (index < text.length) {
+                    document.getElementById('fact').innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(typingEffect, speed);
+                } else {
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                }
+            };
+            document.getElementById('cursor').style.display = 'none';
+            typingEffect();
+        }
+
+        function updateProgressBar(estimatedTime) {
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+            const increment = 100 / estimatedTime;
+            const timer = setInterval(() => {
+                progress += increment;
+                progressBar.value = progress;
+                if (progress >= 100) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+        }
+
+        function generateImage(fact) {
+
+            const apiUrl = 'https://api-inference.huggingface.co/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad';
+    const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
+    const data = {
+        "inputs": {
+            "question": "What insect name is telling you about. Don't include adjectives",
+            "context": fact.substring(0, fact.indexOf(" tell you ")+ 50)
+        }, "options":{"wait_for_model":true}
+    };
+
+    axios.post(apiUrl, data, { headers: headers })
+        .then(response => {
+            const pixabayUrl = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=` + encodeURIComponent(response.data.answer+" insect") + "&image_type=photo";
+            axios.get(pixabayUrl)
+                .then(response => {
+                    const photos = response.data.hits;
+                    let photoIndex = 0
+                    if (photos.length > 0) {
+                        
+                        document.getElementById('image').innerHTML = '<img src="' + photos[0].webformatURL + '" alt="Insect Image">';
+                        
+                    } else {
+                        document.getElementById('image').innerHTML = `Unfortunately I was unable to find an image for this insect 😔`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        }
+    </script>
+</body>
+</html>
