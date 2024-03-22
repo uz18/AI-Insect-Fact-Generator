@@ -90,12 +90,15 @@ button {
   padding: 16px;
   border-radius: 8px;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   z-index: 9999;
+  transform: translateY(-20px);
+  margin-bottom: 10px;
 }
 
 .notification.show {
   opacity: 1;
+  transform: translateY(0);
 }
 
 .notification-title {
@@ -125,7 +128,51 @@ button {
     </div>
 
     <script>
-        function showNotification(title, data) {
+        let notificationCount = 0;
+const notificationContainer = document.createElement('div');
+notificationContainer.style.position = 'fixed';
+notificationContainer.style.top = '20px';
+notificationContainer.style.right = '20px';
+document.body.appendChild(notificationContainer);
+
+function showNotification(title, data) {
+  const notification = document.createElement('div');
+  notification.classList.add('notification');
+
+  const notificationTitle = document.createElement('div');
+  notificationTitle.classList.add('notification-title');
+  notificationTitle.textContent = title;
+
+  const notificationData = document.createElement('div');
+  notificationData.classList.add('notification-data');
+  notificationData.textContent = data;
+
+  notification.appendChild(notificationTitle);
+  notification.appendChild(notificationData);
+
+  notificationContainer.appendChild(notification);
+
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      notificationContainer.removeChild(notification);
+      updateNotificationPositions();
+    }, 500);
+  }, 5000);
+
+  updateNotificationPositions();
+}
+
+function updateNotificationPositions() {
+  const notifications = notificationContainer.children;
+  for (let i = 0; i < notifications.length; i++) {
+    notifications[i].style.transform = `translateY(${i * 90}px)`;
+  }
+}
   const notification = document.createElement('div');
   notification.classList.add('notification');
 
@@ -142,6 +189,9 @@ button {
 
   document.body.appendChild(notification);
 
+  notification.style.top = `${20 + notificationCount * 90}px`;
+  notificationCount++;
+
   setTimeout(() => {
     notification.classList.add('show');
   }, 100);
@@ -150,9 +200,9 @@ button {
     notification.classList.remove('show');
     setTimeout(() => {
       document.body.removeChild(notification);
+      notificationCount--;
     }, 500);
   }, 5000);
-}
 
         let previousFacts = [];
 
