@@ -194,7 +194,7 @@ button {
             },
             generateResponse(apiUrl, headers, prompt, ''));
         }catch(error){
-            showNotification('Error', error);
+            showNotification('Error ⚠️', error);
         }
         }
 
@@ -232,7 +232,7 @@ button {
 
             generateResponse(apiUrl, headers, prompt, '');
         }catch(error){
-            showNotification('Error', error);
+            showNotification('Error ⚠️', error);
         }
         }
 
@@ -253,7 +253,7 @@ button {
                     }
                 })
                 .catch(error => {
-                    showNotification('Error', error);
+                    showNotification('Error ⚠️', error);
                 });
         }
 
@@ -313,11 +313,11 @@ button {
                     }
                 })
                 .catch(error => {
-                    showNotification('Error', error);
+                    showNotification('Error ⚠️', error);
                 });
             })
         .catch(error => {
-            showNotification('Error', error);
+            showNotification('Error ⚠️', error);
         });
 
         }
