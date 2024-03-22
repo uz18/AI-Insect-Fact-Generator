@@ -123,8 +123,8 @@ button {
             <p>Generating Insect Fact</p>
             <progress id="progress-bar" max="100" value="0"></progress>
         </div>
-        <button id="generate-btn" onclick="generateFact()">Tell me an insect fact</button>
-        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()">Tell me about a different insect</button>
+        <button id="generate-btn" onclick="generateFact()">Generate Fact</button>
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()">Generate a Different Fact</button>
     </div>
 
     <script>
@@ -182,36 +182,7 @@ function updateNotificationPositions() {
     notifications[i].style.transform = `translateY(${i * 90}px)`;
   }
 }
-  const notification = document.createElement('div');
-  notification.classList.add('notification');
 
-  const notificationTitle = document.createElement('div');
-  notificationTitle.classList.add('notification-title');
-  notificationTitle.textContent = title;
-
-  const notificationData = document.createElement('div');
-  notificationData.classList.add('notification-data');
-  notificationData.textContent = data;
-
-  notification.appendChild(notificationTitle);
-  notification.appendChild(notificationData);
-
-  document.body.appendChild(notification);
-
-  notification.style.top = `${20 + notificationCount * 90}px`;
-  notificationCount++;
-
-  setTimeout(() => {
-    notification.classList.add('show');
-  }, 100);
-
-  setTimeout(() => {
-    notification.classList.remove('show');
-    setTimeout(() => {
-      document.body.removeChild(notification);
-      notificationCount--;
-    }, 500);
-  }, 5000);
 
         function generateFact() {
             try{
