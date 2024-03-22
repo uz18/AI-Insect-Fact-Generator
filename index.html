@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <link rel="icon" type="image/png" href="https://em-content.zobj.net/source/apple/271/robot_1f916.png">
@@ -332,34 +333,13 @@ function updateNotificationPositions() {
         }
 
         function generateImage(fact) {
-
-            const apiUrl = 'https://api-inference.huggingface.co/models/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad';
-    const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
-    const data = {
-        "inputs": {
-            "question": "What insect name is telling you about. Don't include adjectives",
-            "context": fact.substring(0, fact.indexOf(" tell you ")+ 50)
-        }, "options":{"wait_for_model":true}
-    };
-
-    axios.post(apiUrl, data, { headers: headers })
+    axios.post("https://insectserver-qse3.onrender.com/generate-image", {"fact":fact}, { 'Content-Type': 'application/json' })
         .then(response => {
-            const pixabayUrl = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=` + encodeURIComponent(response.data.answer+" insect") + "&image_type=photo";
-            axios.get(pixabayUrl)
-                .then(response => {
-                    const photos = response.data.hits;
-                    let photoIndex = 0
-                    if (photos.length > 0) {
-                        
-                        document.getElementById('image').innerHTML = '<img src="' + photos[0].webformatURL + '" alt="Insect Image">';
-                        
+                    if (response.data.includes("https://pixabay.com")) {
+                        document.getElementById('image').innerHTML = '<img src="' + response.data + '" alt="Insect Image">';
                     } else {
                         document.getElementById('image').innerHTML = `Unfortunately I was unable to find an image for this insect 😔`;
                     }
-                })
-                .catch(error => {
-                    showNotification('Error ⚠️', error);
-                });
             })
         .catch(error => {
             showNotification('Error ⚠️', error);
