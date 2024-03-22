@@ -128,6 +128,15 @@ button {
     </div>
 
     <script>
+          let previousFacts = [];
+
+// Load previous facts from localStorage on page load
+window.addEventListener('load', function() {
+   const storedFacts = localStorage.getItem('previousFacts');
+   if (storedFacts) {
+       previousFacts = JSON.parse(storedFacts);
+   }
+});
         let notificationCount = 0;
 const notificationContainer = document.createElement('div');
 notificationContainer.style.position = 'fixed';
@@ -204,19 +213,8 @@ function updateNotificationPositions() {
     }, 500);
   }, 5000);
 
-        let previousFacts = [];
-
-         // Load previous facts from localStorage on page load
-        window.addEventListener('load', function() {
-            const storedFacts = localStorage.getItem('previousFacts');
-            if (storedFacts) {
-                previousFacts = JSON.parse(storedFacts);
-            }
-        });
         function generateFact() {
             try{
-            const apiUrl = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
-            const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
             let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
 
             // Append previously generated facts to the prompt
@@ -242,7 +240,7 @@ function updateNotificationPositions() {
                     clearInterval(progressTimer);
                 }
             },
-            generateResponse(apiUrl, headers, prompt, ''));
+            generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, ''));
         }catch(error){
             showNotification('Error ⚠️', error);
         }
@@ -280,14 +278,14 @@ function updateNotificationPositions() {
                 }
             }, 100);
 
-            generateResponse(apiUrl, headers, prompt, '');
+            generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, '');
         }catch(error){
             showNotification('Error ⚠️', error);
         }
         }
 
-        function generateResponse(apiUrl, headers, prompt, previousResponse) {
-            axios.post(apiUrl, {"inputs": prompt,"parameters":{"return_full_text":false,"temperature":1,"max_new_tokens":250},"options":{"dont_load_model":true,"signal":{},"use_cache":false,"wait_for_model":true}}, { headers: headers })
+        function generateResponse(apiUrl, prompt, previousResponse) {
+            axios.post(apiUrl, prompt, { 'Content-Type': 'application/json' })
                 .then(response => {
                     const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
                     const fact = previousResponse + generatedText;
