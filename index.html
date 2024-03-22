@@ -56,6 +56,11 @@
             text-align: center;
             margin-top: 20px;
         }
+        #image-text {
+            text-align: center;
+            margin-top: 10px;
+            color:#E4E6EB;
+        }
         #loading {
     display: none;
     text-align: center;
@@ -132,7 +137,10 @@ button {
             <div id="fact"></div>
             <div id="cursor"></div>
         </div>
-        <div id="image"></div>
+        <div class="image-container">
+            <div id="image"></div>
+            <div id="image-text"></div>
+        </div>
         <div id="loading">
             <p>Generating Insect Fact</p>
             <progress id="progress-bar" max="100" value="0"></progress>
@@ -329,7 +337,7 @@ function clearCookies() {
         .then(response => {
                     if (response.data.photoURL.includes("https://pixabay.com")) {
                         document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL + '" alt="Insect Image">';
-                        document.getElementById('image').innerText = '<img src="' + response.data.inferencedData + '" alt="Insect Image">';
+                        document.getElementById('image-text').innerText = 'Inferenced insect name: ' + response.data.inferencedData;
                     } else {
                         showNotification('Error ⚠️', response.data.error);
                         document.getElementById('regenerate-btn').style.display = 'block';
