@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #18191A;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,17 +18,17 @@
         .container {
             max-width: 800px;
             width: 90%;
-            background-color: #fff;
+            background-color: #242526;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
         h1 {
             text-align: center;
-            color: #333;
+            color: #E4E6EB;
         }
         .chat-box {
-            background-color: #f9f9f9;
+            background-color: #3A3B3C;
             border-radius: 5px;
             padding: 20px;
             margin-bottom: 20px;
@@ -60,6 +60,7 @@
     text-align: center;
     font-size: 18px;
     margin-top: 20px;
+    color: #E4E6EB
 }
 .loading-container {
     display: flex;
@@ -85,8 +86,8 @@ button {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #ff6b6b;
-  color: white;
+  background-color: #3A3B3C;
+  color: #E4E6EB;
   padding: 16px;
   border-radius: 8px;
   opacity: 0;
@@ -109,6 +110,18 @@ button {
 .notification-data {
   font-size: 14px;
 }
+.disclaimer-box {
+    background-color: rgba(211, 211, 211, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.disclaimer-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
     </style>
 </head>
 <body>
@@ -125,11 +138,14 @@ button {
         </div>
         <button id="generate-btn" onclick="generateFact()">Generate Fact</button>
         <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()">Generate a Different Fact</button>
+
+        <div class="disclaimer-box">
+            <p>By using this website, you acknowledge and agree that we use cookies to store your previous responses locally on your device. These previous responses are sent to our server solely for the purpose of ensuring that no duplicate responses are provided. We do not store or retain any of your responses on our server and we do not store or collect any personal data. If you wish to clear your locally stored cookies from this website at any time, please <a href="#" onclick="clearCookies()">click here</a>. By continuing to use this website, you consent to the use of cookies as described above.</p>
+        </div>
     </div>
 
     <script>
           let previousFacts = [];
-
 // Load previous facts from localStorage on page load
 window.addEventListener('load', function() {
    const storedFacts = localStorage.getItem('previousFacts');
@@ -182,7 +198,10 @@ function updateNotificationPositions() {
     notifications[i].style.transform = `translateY(${i * 90}px)`;
   }
 }
-
+function clearCookies() {
+    localStorage.removeItem('previousFacts');
+    showNotification('Cookies Cleared ✅', 'Your locally stored cookies from this website have been cleared!');
+}
 
         function generateFact() {
             try{
@@ -214,6 +233,8 @@ function updateNotificationPositions() {
             generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, ''));
         }catch(error){
             showNotification('Error ⚠️', error);
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         }
         }
 
@@ -250,6 +271,8 @@ function updateNotificationPositions() {
             generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, '');
         }catch(error){
             showNotification('Error ⚠️', error);
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         }
         }
 
@@ -266,6 +289,8 @@ function updateNotificationPositions() {
                 })
                 .catch(error => {
                     showNotification('Error ⚠️', error);
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
                 });
         }
 
@@ -306,10 +331,14 @@ function updateNotificationPositions() {
                         document.getElementById('image').innerText = response.data.inferencedData;
                     } else {
                         showNotification('Error ⚠️', response.data.error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
                     }
             })
         .catch(error => {
             showNotification('Error ⚠️', error);
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         });
 
         }
