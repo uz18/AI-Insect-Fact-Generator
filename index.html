@@ -15,14 +15,26 @@
             align-items: center;
             min-height: 100vh;
         }
-        .container {
-            max-width: 800px;
-            width: 90%;
-            background-color: #242526;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
+.container {
+    max-width: 800px;
+    width: 90%;
+    background-color: #242526;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 0 auto;
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 97%;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 10px;
+    }
+}
         h1 {
             text-align: center;
             color: #E4E6EB;
@@ -44,7 +56,7 @@
             display: inline-block;
             width: 5px;
             height: 1em;
-            background-color: black;
+            background-color: #18191A;
             animation: blink 1s infinite;
         }
         @keyframes blink {
@@ -83,7 +95,7 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #4CAF50;
-    color: #E4E6EB;
+    color: #18191A;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -116,8 +128,9 @@ button {
 .notification-data {
   font-size: 14px;
 }
+
 .disclaimer-box {
-    background-color: rgba(211, 211, 211, 0.8);
+    background-color: #B0B3B8;
     border-radius: 10px;
     padding: 20px;
     margin-top: 20px;
@@ -126,8 +139,34 @@ button {
 .disclaimer-box p {
     margin: 0;
     font-size: 14px;
-    color: #333;
+    color: #3A3B3C;
 }
+
+.cookie-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.cookie-buttons button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#accept-cookies-btn {
+    background-color: #3A3B3C;
+    color: #E4E6EB;
+}
+
+#decline-cookies-btn {
+    background-color: #3A3B3C;
+    color: #E4E6EB;
+}
+
     </style>
 </head>
 <body>
@@ -145,11 +184,15 @@ button {
             <p>Generating Insect Fact</p>
             <progress id="progress-bar" max="100" value="0"></progress>
         </div>
-        <button id="generate-btn" onclick="generateFact()">Generate Fact</button>
-        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()">Generate a Different Fact</button>
+        <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button>
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about insects</b></button>
 
-        <div class="disclaimer-box">
+        <div class="disclaimer-box" id='disclaimer-box'>
             <p>By using this website, you acknowledge and agree that we use cookies to store your previous responses locally on your device. These previous responses are sent to our server solely for the purpose of ensuring that no duplicate responses are provided. We do not store or retain any of your responses on our server and we do not store or collect any personal data. If you wish to clear your locally stored cookies from this website at any time, please <a href="#" onclick="clearCookies()">click here</a>. By continuing to use this website, you consent to the use of cookies as described above.</p>
+            <div class="cookie-buttons">
+                <button id="accept-cookies-btn" onclick="acceptCookies()">Accept Cookies</button>
+                <button id="decline-cookies-btn" onclick="declineCookies()">Decline Cookies</button>
+            </div>
         </div>
     </div>
 
@@ -210,6 +253,14 @@ function updateNotificationPositions() {
 function clearCookies() {
     localStorage.removeItem('previousFacts');
     showNotification('Cookies Cleared ✅', 'Your locally stored cookies from this website have been cleared!');
+}
+function acceptCookies() {
+    document.getElementById('disclaimer-box').style.display = 'none';
+}
+
+function declineCookies() {
+    clearCookies();
+    window.history.back();
 }
 
         function generateFact() {
