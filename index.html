@@ -81,6 +81,31 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+.notification.show {
+  opacity: 1;
+}
+
+.notification-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.notification-data {
+  font-size: 14px;
+}
     </style>
 </head>
 <body>
@@ -100,6 +125,35 @@ button {
     </div>
 
     <script>
+        function showNotification(title, data) {
+  const notification = document.createElement('div');
+  notification.classList.add('notification');
+
+  const notificationTitle = document.createElement('div');
+  notificationTitle.classList.add('notification-title');
+  notificationTitle.textContent = title;
+
+  const notificationData = document.createElement('div');
+  notificationData.classList.add('notification-data');
+  notificationData.textContent = data;
+
+  notification.appendChild(notificationTitle);
+  notification.appendChild(notificationData);
+
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 500);
+  }, 5000);
+}
+
         let previousFacts = [];
 
          // Load previous facts from localStorage on page load
@@ -191,7 +245,7 @@ button {
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    showNotification('Error', error);
                 });
         }
 
@@ -251,11 +305,11 @@ button {
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    showNotification('Error', error);
                 });
             })
         .catch(error => {
-            console.error('Error:', error);
+            showNotification('Error', error);
         });
 
         }
