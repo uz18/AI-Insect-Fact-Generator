@@ -1,2 +1,2 @@
 # AI-Insect-Fact-Generator
-Insect fact generator using the Hugging Face and Pixabay to create a unique insect fact and an image to go alongside it
+Webpage which uses the Hugging Face and Pixabay API to create a unique insect fact, inference the insect name from the fact, and an create image to go alongside it
