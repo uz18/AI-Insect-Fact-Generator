@@ -328,7 +328,6 @@ function clearCookies() {
         .then(response => {
                     if (response.data.photoURL.includes("https://pixabay.com")) {
                         document.getElementById('image').innerHTML = '<img src="' + response.data + '" alt="Insect Image">';
-                        document.getElementById('image').innerText = response.data.inferencedData;
                     } else {
                         showNotification('Error ⚠️', response.data.error);
                         document.getElementById('regenerate-btn').style.display = 'block';
