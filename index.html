@@ -400,8 +400,7 @@ function declineCookies() {
                     if (response.data.photoURL.includes("https://pixabay.com")) {
                         document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL + '" alt="Insect Image">';
                         document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data.inferencedData;
-                        document.getElementById('image-credit').innerText = "Photo Source: " + response.data.photoCredit;
-                    } else {
+                        document.getElementById('image-credit').innerHTML = '<a href="' + response.data.photoCreditUrl + '">' + response.data.photoCredit + '</a>';                    } else {
                         showNotification('Error ⚠️', response.data.error);
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
