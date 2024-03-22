@@ -38,6 +38,7 @@
         #fact {
             font-size: 16px;
             line-height: 1.5;
+            color:#E4E6EB
         }
         #cursor {
             display: inline-block;
@@ -77,7 +78,7 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #4CAF50;
-    color: #fff;
+    color: #E4E6EB;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -327,7 +328,8 @@ function clearCookies() {
     axios.post("https://insectserver-qse3.onrender.com/generate-image", {"fact":fact}, { 'Content-Type': 'application/json' })
         .then(response => {
                     if (response.data.photoURL.includes("https://pixabay.com")) {
-                        document.getElementById('image').innerHTML = '<img src="' + response.data + '" alt="Insect Image">';
+                        document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL + '" alt="Insect Image">';
+                        document.getElementById('image').innerText = '<img src="' + response.data.inferencedData + '" alt="Insect Image">';
                     } else {
                         showNotification('Error ⚠️', response.data.error);
                         document.getElementById('regenerate-btn').style.display = 'block';
