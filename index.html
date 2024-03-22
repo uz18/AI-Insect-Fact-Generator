@@ -288,6 +288,7 @@ function clearCookies() {
         function generateResponse(apiUrl, prompt, previousResponse) {
             axios.post(apiUrl, prompt, { 'Content-Type': 'application/json' })
                 .then(response => {
+                    document.getElementById('loading').style.display = 'none';
                     const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
                     const fact = previousResponse + generatedText;
                     previousFacts.push(fact);
