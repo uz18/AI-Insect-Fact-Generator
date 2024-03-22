@@ -164,6 +164,7 @@ button {
             }
         });
         function generateFact() {
+            try{
             const apiUrl = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
             const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
             let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
@@ -192,9 +193,13 @@ button {
                 }
             },
             generateResponse(apiUrl, headers, prompt, ''));
+        }catch(error){
+            showNotification('Error', error);
+        }
         }
 
         function regenerateFact() {
+            try{
             const apiUrl = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
             const headers = { 'Authorization': `Bearer ${HUGGINGFACE_API_KEY}` };
             let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
@@ -226,6 +231,9 @@ button {
             }, 100);
 
             generateResponse(apiUrl, headers, prompt, '');
+        }catch(error){
+            showNotification('Error', error);
+        }
         }
 
         function generateResponse(apiUrl, headers, prompt, previousResponse) {
