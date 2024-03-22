@@ -262,12 +262,7 @@ function updateNotificationPositions() {
                     // Store previous facts in localStorage
                     localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                     typeText(generatedText.substring(0, generatedText.lastIndexOf('.')+1));
-                    if (response.data[0].finish_reason === 'length') {
-                        console.log("BLEHA")
-                    } else {
-                        document.getElementById('loading').style.display = 'none';
-                        generateImage(fact);
-                    }
+                    generateImage(fact);
                 })
                 .catch(error => {
                     showNotification('Error ⚠️', error);
@@ -306,10 +301,11 @@ function updateNotificationPositions() {
         function generateImage(fact) {
     axios.post("https://insectserver-qse3.onrender.com/generate-image", {"fact":fact}, { 'Content-Type': 'application/json' })
         .then(response => {
-                    if (response.data.includes("https://pixabay.com")) {
+                    if (response.data.photoURL.includes("https://pixabay.com")) {
                         document.getElementById('image').innerHTML = '<img src="' + response.data + '" alt="Insect Image">';
+                        document.getElementById('image').innerText = response.data.inferencedData;
                     } else {
-                        document.getElementById('image').innerHTML = `Unfortunately I was unable to find an image for this insect 😔`;
+                        showNotification('Error ⚠️', response.data.error);
                     }
             })
         .catch(error => {
