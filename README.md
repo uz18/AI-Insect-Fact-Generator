@@ -3,6 +3,6 @@ Webpage which uses the Hugging Face and Pixabay API to create a unique insect fa
 
 https://uz18.github.io/AI-Insect-Fact-Generator/
 
-Please note that the backend API is running on a free hosting service. If your requests take longer than ~15 seconds its very likely that the service has spun down due to inactivity. \
+Please note that the backend API is running on a seperate free hosting service in order to mask my API keys. If your requests take longer than ~15 seconds its very likely that the service has spun down due to inactivity. \
 \
 If this is the case, please try your request again in another 30-60 seconds.
