@@ -354,6 +354,7 @@ function declinelocalstorage() {
     }, 30000);
             axios.post(apiUrl, prompt, { 'Content-Type': 'application/json' , signal: controller.signal  })
                 .then(response => {
+                    clearTimeout(timeoutId);
                     document.getElementById('loading').style.display = 'none';
                     const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
                     const fact = previousResponse + generatedText;
@@ -364,6 +365,7 @@ function declinelocalstorage() {
                     generateImage(fact);
                 })
                 .catch(error => {
+                    clearTimeout(timeoutId);
                     showNotification('Error ⚠️', error);
                     document.getElementById('regenerate-btn').style.display = 'block';
                     document.getElementById('loading').style.display = 'none';
@@ -401,12 +403,13 @@ function declinelocalstorage() {
 
         function generateImage(fact) {
             const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
+    const timeoutId2 = setTimeout(() => {
         controller.abort();
         showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
     }, 30000);
     axios.post("https://insectserver-qse3.onrender.com/generate-image", {"fact":fact}, { 'Content-Type': 'application/json' , signal: controller.signal })
         .then(response => {
+            clearTimeout(timeoutId2);
                     if (response.data.photoURL.includes("https://pixabay.com")) {
                         document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL + '" alt="Insect Image">';
                         document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data.inferencedData;
@@ -417,6 +420,7 @@ function declinelocalstorage() {
                     }
             })
         .catch(error => {
+            clearTimeout(timeoutId2);
             showNotification('Error ⚠️', error);
             document.getElementById('regenerate-btn').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
