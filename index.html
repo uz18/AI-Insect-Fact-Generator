@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="icon" type="image/png" href="https://em-content.zobj.net/source/apple/271/robot_1f916.png">
     <title>Insect Fact Generator</title>
@@ -15,30 +16,33 @@
             align-items: center;
             min-height: 100vh;
         }
-.container {
-    max-width: 800px;
-    width: 90%;
-    background-color: #242526;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 0 auto;
-}
 
-/* Media query for mobile devices */
-@media screen and (max-width: 600px) {
-    .container {
-        width: 97%;
-        max-width: none;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 10px;
-    }
-}
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background-color: #242526;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        /* Media query for mobile devices */
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 97%;
+                max-width: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 10px;
+            }
+        }
+
         h1 {
             text-align: center;
             color: #E4E6EB;
         }
+
         .chat-box {
             background-color: #3A3B3C;
             border-radius: 5px;
@@ -47,11 +51,13 @@
             min-height: 20px;
             position: relative;
         }
+
         #fact {
             font-size: 16px;
             line-height: 1.5;
-            color:#E4E6EB
+            color: #E4E6EB
         }
+
         #cursor {
             display: inline-block;
             width: 5px;
@@ -59,121 +65,164 @@
             background-color: #18191A;
             animation: blink 1s infinite;
         }
+
         @keyframes blink {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
+
         #image {
             text-align: center;
             margin-top: 20px;
         }
+
         #image-text {
             text-align: center;
             margin-top: 10px;
-            color:#E4E6EB;
+            color: #E4E6EB;
         }
+
         #image-credit {
             text-align: center;
             margin-top: 10px;
-            color:#E4E6EB;
+            color: #E4E6EB;
         }
+
         #loading {
-    display: none;
-    text-align: center;
-    font-size: 18px;
-    margin-top: 20px;
-    color: #E4E6EB
-}
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#progress-bar {
-    width: 25%;
-    margin-top: 10px;
-}
-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50;
-    color: #18191A;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #3A3B3C;
-  color: #E4E6EB;
-  padding: 16px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-  z-index: 9999;
-  transform: translateY(-20px);
-  margin-bottom: 10px;
-}
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #E4E6EB
+        }
 
-.notification.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.notification-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
+        @keyframes loading {
+            0% {
+                content: "⠋";
+            }
 
-.notification-data {
-  font-size: 14px;
-}
+            20% {
+                content: "⠙";
+            }
 
-.disclaimer-box {
-    background-color: #B0B3B8;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
-}
+            40% {
+                content: "⠹";
+            }
 
-.disclaimer-box p {
-    margin: 0;
-    font-size: 14px;
-    color: #3A3B3C;
-}
+            60% {
+                content: "⠸";
+            }
 
-.local-storage-buttons {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
+            80% {
+                content: "⠼";
+            }
 
-.local-storage-buttons button {
-    margin: 0 10px;
-    padding: 8px 16px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+            100% {
+                content: "⠴";
+            }
+        }
 
-#acceptbtn {
-    background-color: #3A3B3C;
-    color: #E4E6EB;
-}
+        #loading::after {
+            content: "⠋";
+            animation: loading 1s linear infinite;
+        }
 
-#declinebtn {
-    background-color: #3A3B3C;
-    color: #E4E6EB;
-}
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #18191A;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+            padding: 16px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            z-index: 9999;
+            transform: translateY(-20px);
+            margin-bottom: 10px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .notification-data {
+            font-size: 14px;
+        }
+
+        .disclaimer-box {
+            background-color: #B0B3B8;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .disclaimer-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #3A3B3C;
+        }
+
+        .local-storage-buttons {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .local-storage-buttons button {
+            margin: 0 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #acceptbtn {
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+        }
+
+        #declinebtn {
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Insect Fact Generator</h1>
@@ -187,14 +236,18 @@ button {
             <div id="image-credit"></div>
         </div>
         <div id="loading">
-            <p>Generating Insect Fact</p>
-            <progress id="progress-bar" max="100" value="0"></progress>
-        </div>
-        <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button>
-        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about insects</b></button>
-
+            <p>Generating Insect Fact<span id="loading-dots"></span></p>
+        </div> <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button> <button
+            id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about
+                insects</b></button>
         <div class="disclaimer-box" id='disclaimer-box'>
-            <p>By using this website, you acknowledge and agree that we use your browser's "local storage" to store your previous responses locally on your device. These previous responses are sent to our server solely for the purpose of ensuring that no duplicate responses are provided. We do not store or retain any of your responses on our server and we do not store or collect any personal data. If you wish to clear your "local storage" from this website at any time, please <a href="#" onclick="clearlocalstorage()">click here</a>. By continuing to use this website, you consent to the use of "local storage" as described above.</p>
+            <p>By using this website, you acknowledge and agree that we use your browser's "local storage" to store your
+                previous responses locally on your device. These previous responses are sent to our server solely for
+                the purpose of ensuring that no duplicate responses are provided. We do not store or retain any of your
+                responses on our server and we do not store or collect any personal data. If you wish to clear your
+                "local storage" from this website at any time, please <a href="#" onclick="clearlocalstorage()">click
+                    here</a>. By continuing to use this website, you consent to the use of "local storage" as described
+                above.</p>
             <div class="local-storage-buttons">
                 <button id="acceptbtn" onclick="acceptlocalstorage()">Accept</button>
                 <button id="declinebtn" onclick="declinelocalstorage()">Decline</button>
@@ -203,165 +256,155 @@ button {
     </div>
 
     <script>
-          let previousFacts = [];
-// Load previous facts from localStorage on page load
-window.addEventListener('load', function() {
-   const storedFacts = localStorage.getItem('previousFacts');
-   if (storedFacts) {
-       previousFacts = JSON.parse(storedFacts);
-   }
-});
+        let previousFacts = [];
+        // Load previous facts from localStorage on page load
+        window.addEventListener('load', function () {
+            const storedFacts = localStorage.getItem('previousFacts');
+            if (storedFacts) {
+                previousFacts = JSON.parse(storedFacts);
+            }
+        });
         let notificationCount = 0;
-const notificationContainer = document.createElement('div');
-notificationContainer.style.position = 'fixed';
-notificationContainer.style.top = '20px';
-notificationContainer.style.right = '20px';
-document.body.appendChild(notificationContainer);
+        const notificationContainer = document.createElement('div');
+        notificationContainer.style.position = 'fixed';
+        notificationContainer.style.top = '20px';
+        notificationContainer.style.right = '20px';
+        document.body.appendChild(notificationContainer);
 
-function showNotification(title, data) {
-  const notification = document.createElement('div');
-  notification.classList.add('notification');
+        function showNotification(title, data) {
+            const notification = document.createElement('div');
+            notification.classList.add('notification');
 
-  const notificationTitle = document.createElement('div');
-  notificationTitle.classList.add('notification-title');
-  notificationTitle.textContent = title;
+            const notificationTitle = document.createElement('div');
+            notificationTitle.classList.add('notification-title');
+            notificationTitle.textContent = title;
 
-  const notificationData = document.createElement('div');
-  notificationData.classList.add('notification-data');
-  notificationData.textContent = data;
+            const notificationData = document.createElement('div');
+            notificationData.classList.add('notification-data');
+            notificationData.textContent = data;
 
-  notification.appendChild(notificationTitle);
-  notification.appendChild(notificationData);
+            notification.appendChild(notificationTitle);
+            notification.appendChild(notificationData);
 
-  notificationContainer.appendChild(notification);
+            notificationContainer.appendChild(notification);
 
-  setTimeout(() => {
-    notification.classList.add('show');
-  }, 100);
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
 
-  setTimeout(() => {
-    notification.classList.remove('show');
-    setTimeout(() => {
-      notificationContainer.removeChild(notification);
-      updateNotificationPositions();
-    }, 500);
-  }, 10000);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                    updateNotificationPositions();
+                }, 500);
+            }, 10000);
 
-  updateNotificationPositions();
-}
+            updateNotificationPositions();
+        }
 
-function updateNotificationPositions() {
-  const notifications = notificationContainer.children;
-  for (let i = 0; i < notifications.length; i++) {
-    notifications[i].style.transform = `translateY(${i * 90}px)`;
-  }
-}
-function clearlocalstorage() {
-    localStorage.removeItem('previousFacts');
-    showNotification('Local Storage Cleared ✅', 'Your local storage from this website has been cleared!');
-}
-function acceptlocalstorage() {
-    document.getElementById('disclaimer-box').style.display = 'none';
-}
+        function updateNotificationPositions() {
+            const notifications = notificationContainer.children;
+            for (let i = 0; i < notifications.length; i++) {
+                notifications[i].style.transform = `translateY(${i * 90}px)`;
+            }
+        }
 
-function declinelocalstorage() {
-    clearlocalstorage();
-    window.history.back();
-}
+        function clearlocalstorage() {
+            localStorage.removeItem('previousFacts');
+            showNotification('Local Storage Cleared ✅', 'Your local storage from this website has been cleared!');
+        }
+
+        function acceptlocalstorage() {
+            document.getElementById('disclaimer-box').style.display = 'none';
+        }
+
+        function declinelocalstorage() {
+            clearlocalstorage();
+            window.history.back();
+        }
 
         function generateFact() {
-            try{
-            let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+            try {
+                let prompt =
+                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
 
-            // Append previously generated facts to the prompt
-            for (let i = 0; i < previousFacts.length; i++) {
-                prompt += ` ${previousFacts[i]}</s>`;
-            }
-            prompt += ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('fact').innerHTML = '';
-            document.getElementById('image').innerHTML = '';
-            document.getElementById('image-text').innerHTML = '';
-            document.getElementById('image-credit').innerHTML = '';
-            document.getElementById('generate-btn').style.display = 'none';
-
-            // Start the progress bar
-            const maxTime = 2000;
-            const progressBar = document.getElementById('progress-bar');
-            let progress = 0;
-            const increment = 100 / maxTime;
-            progressTimer = setInterval(() => {
-                progress += increment;
-                progressBar.value = progress;
-                if (progress >= 100) {
-                    clearInterval(progressTimer);
+                // Append previously generated facts to the prompt
+                for (let i = 0; i < previousFacts.length; i++) {
+                    prompt += ` ${previousFacts[i]}</s>`;
                 }
-            },
-            generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, ''));
-        }catch(error){
-            showNotification('Error ⚠️', error);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-        }
+                prompt +=
+                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
+
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('fact').innerHTML = '';
+                document.getElementById('image').innerHTML = '';
+                document.getElementById('image-text').innerHTML = '';
+                document.getElementById('image-credit').innerHTML = '';
+                document.getElementById('generate-btn').style.display = 'none';
+
+                    
+                    generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {
+                        "prompt": prompt
+                    }, '')
+            } catch (error) {
+                showNotification('Error ⚠️', error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
         }
 
         function regenerateFact() {
-            try{
-            let prompt = `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+            try {
+                let prompt =
+                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
 
-            // Append previously generated facts to the prompt
-            for (let i = 0; i < previousFacts.length; i++) {
-                prompt += ` ${previousFacts[i]}</s>`;
-            }
-
-            // Append the original prompt without the <s> tag
-            prompt += ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('fact').innerHTML = '';
-            document.getElementById('image').innerHTML = '';
-            document.getElementById('image-text').innerHTML = '';
-            document.getElementById('image-credit').innerHTML = '';
-            document.getElementById('regenerate-btn').style.display = 'none';
-
-            // Start the progress bar
-            const maxTime = 200;
-            const progressBar = document.getElementById('progress-bar');
-            let progress = 0;
-            const increment = 100 / maxTime;
-            progressTimer = setInterval(() => {
-                progress += increment;
-                progressBar.value = progress;
-                if (progress >= 100) {
-                    clearInterval(progressTimer);
+                // Append previously generated facts to the prompt
+                for (let i = 0; i < previousFacts.length; i++) {
+                    prompt += ` ${previousFacts[i]}</s>`;
                 }
-            }, 100);
 
-            generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {"prompt":prompt}, '');
-        }catch(error){
-            showNotification('Error ⚠️', error);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-        }
+                // Append the original prompt without the <s> tag
+                prompt +=
+                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('fact').innerHTML = '';
+                document.getElementById('image').innerHTML = '';
+                document.getElementById('image-text').innerHTML = '';
+                document.getElementById('image-credit').innerHTML = '';
+                document.getElementById('regenerate-btn').style.display = 'none';
+
+                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {
+                    "prompt": prompt
+                }, '');
+            } catch (error) {
+                showNotification('Error ⚠️', error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
         }
 
         function generateResponse(apiUrl, prompt, previousResponse) {
             const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-        controller.abort();
-        showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-    }, 30000);
-            axios.post(apiUrl, prompt, { 'Content-Type': 'application/json' , signal: controller.signal  })
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+            }, 30000);
+            axios.post(apiUrl, prompt, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
                 .then(response => {
                     clearTimeout(timeoutId);
                     document.getElementById('loading').style.display = 'none';
-                    const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
+                    const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text
+                        .indexOf('... '));
                     const fact = previousResponse + generatedText;
                     previousFacts.push(fact);
                     // Store previous facts in localStorage
                     localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                    typeText(generatedText.substring(0, generatedText.lastIndexOf('.')+1));
+                    typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
                     generateImage(fact);
                 })
                 .catch(error => {
@@ -388,45 +431,48 @@ function declinelocalstorage() {
             typingEffect();
         }
 
-        function updateProgressBar(estimatedTime) {
-            const progressBar = document.getElementById('progress-bar');
-            let progress = 0;
-            const increment = 100 / estimatedTime;
-            const timer = setInterval(() => {
-                progress += increment;
-                progressBar.value = progress;
-                if (progress >= 100) {
-                    clearInterval(timer);
-                }
-            }, 1000);
-        }
-
         function generateImage(fact) {
             const controller = new AbortController();
-    const timeoutId2 = setTimeout(() => {
-        controller.abort();
-        showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-    }, 30000);
-    axios.post("https://insectserver-qse3.onrender.com/generate-image", {"fact":fact}, { 'Content-Type': 'application/json' , signal: controller.signal })
-        .then(response => {
-            clearTimeout(timeoutId2);
+            const timeoutId2 = setTimeout(() => {
+                controller.abort();
+                showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+            }, 30000);
+            axios.post("https://insectserver-qse3.onrender.com/generate-image", {
+                    "fact": fact
+                }, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
+                .then(response => {
+                    clearTimeout(timeoutId2);
                     if (response.data.photoURL.includes("https://pixabay.com")) {
-                        document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL + '" alt="Insect Image">';
-                        document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data.inferencedData;
-                        document.getElementById('image-credit').innerHTML = '<a href="' + response.data.photoCredit + '">' + response.data.photoCredit + '</a>';                    } else {
+                        document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
+                            '" alt="Insect Image">';
+                        document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data
+                            .inferencedData;
+                        document.getElementById('image-credit').innerHTML = '<a href="' + response.data
+                            .photoCredit + '">' + response.data.photoCredit + '</a>';
+                    } else {
                         showNotification('Error ⚠️', response.data.error);
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
                     }
-            })
-        .catch(error => {
-            clearTimeout(timeoutId2);
-            showNotification('Error ⚠️', error);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-        });
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId2);
+                    showNotification('Error ⚠️', error);
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                });
 
         }
+        
+    // Loading dots animation
+    const loadingDotsElement = document.getElementById('loading-dots');
+    setInterval(() => {
+        loadingDotsElement.textContent = loadingDotsElement.textContent.length < 6 ? loadingDotsElement.textContent + '.' : '';
+    }, 500);
     </script>
 </body>
+
 </html>
