@@ -112,30 +112,37 @@
         }
 
         @keyframes loading {
-            0% {
-                content: "⠋";
-            }
-
-            20% {
-                content: "⠙";
-            }
-
-            40% {
-                content: "⠹";
-            }
-
-            60% {
-                content: "⠸";
-            }
-
-            80% {
-                content: "⠼";
-            }
-
-            100% {
-                content: "⠴";
-            }
-        }
+0% {
+content: "⠋";
+}
+11.11% {
+content: "⠙";
+}
+22.22% {
+content: "⠹";
+}
+33.33% {
+content: "⠸";
+}
+44.44% {
+content: "⠼";
+}
+55.55% {
+content: "⠴";
+}
+66.66% {
+content: "⠦";
+}
+77.77% {
+content: "⠧";
+}
+88.88% {
+content: "⠇";
+}
+100% {
+content: "⠏";
+}
+}
 
         #loading::after {
             content: "⠋";
@@ -390,7 +397,7 @@
             const timeoutId = setTimeout(() => {
                 controller.abort();
                 showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-            }, 30000);
+            }, 90000);
             axios.post(apiUrl, prompt, {
                     'Content-Type': 'application/json',
                     signal: controller.signal
@@ -436,7 +443,7 @@
             const timeoutId2 = setTimeout(() => {
                 controller.abort();
                 showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-            }, 30000);
+            }, 90000);
             axios.post("https://insectserver-qse3.onrender.com/generate-image", {
                     "fact": fact
                 }, {
@@ -466,12 +473,6 @@
                 });
 
         }
-        
-    // Loading dots animation
-    const loadingDotsElement = document.getElementById('loading-dots');
-    setInterval(() => {
-        loadingDotsElement.textContent = loadingDotsElement.textContent.length < 6 ? loadingDotsElement.textContent + '.' : '';
-    }, 500);
     </script>
 </body>
 
