@@ -393,11 +393,7 @@ content: "⠏";
         }
         async function generateResponse(apiUrl, prompt, previousResponse) {
             try {
-                // Check if the cookie exists
-                const cookieExists = document.cookie.includes('token=');
-
-                if (!cookieExists) {
-                    // Cookie doesn't exist, fetch the list of challenges from the server
+                    // Fetch the list of challenges from the server
                     const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
                     const challenges = await response.json();
 
@@ -430,10 +426,10 @@ content: "⠏";
                         document.getElementById('loading').style.display = 'none';
                         return;
                     }
-                }
+                
 
                 
-                // Challenges passed or cookie exists, proceed with generating the response
+                // Challenges passed, proceed with generating the response
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => {
                     controller.abort();
@@ -471,11 +467,8 @@ content: "⠏";
 
         async function generateImage(fact) {
             try {
-                // Check if the cookie exists
-                const cookieExists = document.cookie.includes('token=');
 
-                if (!cookieExists) {
-                    // Cookie doesn't exist, fetch the list of challenges from the server
+                    // fetch the list of challenges from the server
                     const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
                     const challenges = await response.json();
 
@@ -508,10 +501,10 @@ content: "⠏";
                         document.getElementById('loading').style.display = 'none';
                         return;
                     }
-                }
+                
 
                 
-                // Challenges passed or cookie exists, proceed with generating the image
+                // Challenges passed, proceed with generating the image
                 const controller = new AbortController();
                 const timeoutId2 = setTimeout(() => {
                     controller.abort();
