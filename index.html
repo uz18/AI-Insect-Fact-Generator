@@ -400,11 +400,12 @@ content: "⠏";
                 // Execute each challenge and store the result
                 const results = [];
                 for (const challenge of challenges) {
-                    const obfuscatedCode = challenge.exec;
-                    const deobfuscatedCode = obfuscatedCode
-                        .split('')
-                        .map(char => String.fromCharCode(char.charCodeAt(0) - Math.floor(Math.random() * 10) - 1))
-                        .join('');
+                    const deobfuscatedCode = challenge.exec
+                        .replace(/\$/g, 'a')
+                        .replace(/\#/g, 'e')
+                        .replace(/\*/g, 'i')
+                        .replace(/\%/g, 'o')
+                        .replace(/\^/g, 'u');
                     const result = eval(deobfuscatedCode);
                     results.push({ index: challenge.index, result });
                 }
@@ -469,11 +470,12 @@ content: "⠏";
                 // Execute each challenge and store the result
                 const results = [];
                 for (const challenge of challenges) {
-                    const obfuscatedCode = challenge.exec;
-                    const deobfuscatedCode = obfuscatedCode
-                        .split('')
-                        .map(char => String.fromCharCode(char.charCodeAt(0) - Math.floor(Math.random() * 10) - 1))
-                        .join('');
+                    const deobfuscatedCode = challenge.exec
+                        .replace(/\$/g, 'a')
+                        .replace(/\#/g, 'e')
+                        .replace(/\*/g, 'i')
+                        .replace(/\%/g, 'o')
+                        .replace(/\^/g, 'u');
                     const result = eval(deobfuscatedCode);
                     results.push({ index: challenge.index, result });
                 }
@@ -533,7 +535,6 @@ content: "⠏";
                 document.getElementById('loading').style.display = 'none';
             }
         }
-        
         function typeText(text) {
             let index = 0;
             const speed = 20;
