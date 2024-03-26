@@ -406,7 +406,7 @@
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                const response = await axios.get('https://insectserver-qse3.onrender.com/challenges', {signal: controller.signal})
+                const response = await axios.get('https://insectserver-qse3.onrender.com/challenges', {signal: controllerConnect.signal})
                 clearTimeout(timeoutIdConnect);
                 const challenges = response.data;
                 document.getElementById('loading').innerHTML = "Solving javascript challenge  "
