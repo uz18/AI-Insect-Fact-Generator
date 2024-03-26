@@ -398,11 +398,11 @@
         }
         async function generateResponse(apiUrl, prompt) {
             try {
-                document.getElementById('loading').innerHTML = "Connecting to the server"
+                document.getElementById('loading').innerHTML = "Connecting to the server  "
                 // Fetch the list of challenges from the server
                 const response = await axios.get('https://insectserver-qse3.onrender.com/challenges');
                 const challenges = response.data;
-                document.getElementById('loading').innerHTML = "Solving javascript challenge"
+                document.getElementById('loading').innerHTML = "Solving javascript challenge  "
 
                 // Execute each challenge and store the result
                 const results = [];
@@ -423,7 +423,7 @@
                 let submissionResponse;
                 // Submit the challenge results using Axios
                 try {
-                    document.getElementById('loading').innerHTML = "Generating insect fact"
+                    document.getElementById('loading').innerHTML = "Generating insect fact  "
                     submissionResponse = await axios.post('https://insectserver-qse3.onrender.com/submit', {
                         'challenge-result': btoa(JSON.stringify(results))
                     });
