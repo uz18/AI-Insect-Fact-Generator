@@ -393,67 +393,73 @@ content: "⠏";
         }
         async function generateResponse(apiUrl, prompt, previousResponse) {
             try {
-                // Fetch the list of challenges from the server
-                const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
-                const challenges = await response.json();
+                // Check if the cookie exists
+                const cookieExists = document.cookie.includes('token=');
 
-                // Execute each challenge and store the result
-                const results = [];
-                for (const challenge of challenges) {
-                    const deobfuscatedCode = challenge.exec
-                        .replace(/\$/g, 'a')
-                        .replace(/\#/g, 'e')
-                        .replace(/\*/g, 'i')
-                        .replace(/\%/g, 'o')
-                        .replace(/\^/g, 'u');
-                    const result = eval(deobfuscatedCode);
-                    results.push({ index: challenge.index, result });
+                if (!cookieExists) {
+                    // Cookie doesn't exist, fetch the list of challenges from the server
+                    const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
+                    const challenges = await response.json();
+
+                    // Execute each challenge and store the result
+                    const results = [];
+                    for (const challenge of challenges) {
+                        const deobfuscatedCode = challenge.exec
+                            .replace(/\$/g, 'a')
+                            .replace(/\#/g, 'e')
+                            .replace(/\*/g, 'i')
+                            .replace(/\%/g, 'o')
+                            .replace(/\^/g, 'u');
+                        const result = eval(deobfuscatedCode);
+                        results.push({ index: challenge.index, result });
+                    }
+
+                    // Send the challenge results to the server for validation
+                    const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'challenge-result': btoa(JSON.stringify(results)) })
+                    });
+
+                    if (!validationResponse.ok) {
+                        // Challenges failed, handle the error
+                        showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                        return;
+                    }
                 }
 
-                // Send the challenge results to the server for validation
-                const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(results)
-                });
-
-                if (validationResponse.ok) {
-                    // Challenges passed, proceed with generating the response
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => {
-                        controller.abort();
-                        showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-                    }, 90000);
-                    axios.post(apiUrl, prompt, {
-                        'Content-Type': 'application/json',
-                        signal: controller.signal
+                // Challenges passed or cookie exists, proceed with generating the response
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+                }, 90000);
+                axios.post(apiUrl, prompt, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
+                    .then(response => {
+                        clearTimeout(timeoutId);
+                        document.getElementById('loading').style.display = 'none';
+                        const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text
+                            .indexOf('... '));
+                        const fact = previousResponse + generatedText;
+                        previousFacts.push(fact);
+                        // Store previous facts in localStorage
+                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+                        generateImage(fact);
                     })
-                        .then(response => {
-                            clearTimeout(timeoutId);
-                            document.getElementById('loading').style.display = 'none';
-                            const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text
-                                .indexOf('... '));
-                            const fact = previousResponse + generatedText;
-                            previousFacts.push(fact);
-                            // Store previous facts in localStorage
-                            localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                            typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                            generateImage(fact);
-                        })
-                        .catch(error => {
-                            clearTimeout(timeoutId);
-                            showNotification('Error ⚠️', error);
-                            document.getElementById('regenerate-btn').style.display = 'block';
-                            document.getElementById('loading').style.display = 'none';
-                        });
-                } else {
-                    // Challenges failed, handle the error
-                    showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                    document.getElementById('loading').style.display = 'none';
-                }
+                    .catch(error => {
+                        clearTimeout(timeoutId);
+                        showNotification('Error ⚠️', error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    });
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -463,78 +469,85 @@ content: "⠏";
 
         async function generateImage(fact) {
             try {
-                // Fetch the list of challenges from the server
-                const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
-                const challenges = await response.json();
+                // Check if the cookie exists
+                const cookieExists = document.cookie.includes('token=');
 
-                // Execute each challenge and store the result
-                const results = [];
-                for (const challenge of challenges) {
-                    const deobfuscatedCode = challenge.exec
-                        .replace(/\$/g, 'a')
-                        .replace(/\#/g, 'e')
-                        .replace(/\*/g, 'i')
-                        .replace(/\%/g, 'o')
-                        .replace(/\^/g, 'u');
-                    const result = eval(deobfuscatedCode);
-                    results.push({ index: challenge.index, result });
+                if (!cookieExists) {
+                    // Cookie doesn't exist, fetch the list of challenges from the server
+                    const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
+                    const challenges = await response.json();
+
+                    // Execute each challenge and store the result
+                    const results = [];
+                    for (const challenge of challenges) {
+                        const deobfuscatedCode = challenge.exec
+                            .replace(/\$/g, 'a')
+                            .replace(/\#/g, 'e')
+                            .replace(/\*/g, 'i')
+                            .replace(/\%/g, 'o')
+                            .replace(/\^/g, 'u');
+                        const result = eval(deobfuscatedCode);
+                        results.push({ index: challenge.index, result });
+                    }
+
+                    // Send the challenge results to the server for validation
+                    const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'challenge-result': btoa(JSON.stringify(results)) })
+                    });
+
+                    if (!validationResponse.ok) {
+                        // Challenges failed, handle the error
+                        showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                        return;
+                    }
                 }
 
-                // Send the challenge results to the server for validation
-                const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(results)
-                });
-
-                if (validationResponse.ok) {
-                    // Challenges passed, proceed with generating the image
-                    const controller = new AbortController();
-                    const timeoutId2 = setTimeout(() => {
-                        controller.abort();
-                        showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
-                    }, 90000);
-                    axios.post("https://insectserver-qse3.onrender.com/generate-image", {
-                        "fact": fact
-                    }, {
-                        'Content-Type': 'application/json',
-                        signal: controller.signal
-                    })
-                        .then(response => {
-                            clearTimeout(timeoutId2);
-                            if (response.data.photoURL.includes("https://pixabay.com")) {
-                                document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
-                                    '" alt="Insect Image">';
-                                document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data
-                                    .inferencedData;
-                                document.getElementById('image-credit').innerHTML = '<a href="' + response.data
-                                    .photoCredit + '">' + response.data.photoCredit + '</a>';
-                            } else {
-                                showNotification('Error ⚠️', response.data.error);
-                                document.getElementById('regenerate-btn').style.display = 'block';
-                                document.getElementById('loading').style.display = 'none';
-                            }
-                        })
-                        .catch(error => {
-                            clearTimeout(timeoutId2);
-                            showNotification('Error ⚠️', error);
+                // Challenges passed or cookie exists, proceed with generating the image
+                const controller = new AbortController();
+                const timeoutId2 = setTimeout(() => {
+                    controller.abort();
+                    showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+                }, 90000);
+                axios.post("https://insectserver-qse3.onrender.com/generate-image", {
+                    "fact": fact
+                }, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
+                    .then(response => {
+                        clearTimeout(timeoutId2);
+                        if (response.data.photoURL.includes("https://pixabay.com")) {
+                            document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
+                                '" alt="Insect Image">';
+                            document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data
+                                .inferencedData;
+                            document.getElementById('image-credit').innerHTML = '<a href="' + response.data
+                                .photoCredit + '">' + response.data.photoCredit + '</a>';
+                        } else {
+                            showNotification('Error ⚠️', response.data.error);
                             document.getElementById('regenerate-btn').style.display = 'block';
                             document.getElementById('loading').style.display = 'none';
-                        });
-                } else {
-                    // Challenges failed, handle the error
-                    showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                    document.getElementById('loading').style.display = 'none';
-                }
+                        }
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId2);
+                        showNotification('Error ⚠️', error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    });
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
             }
         }
+        
         function typeText(text) {
             let index = 0;
             const speed = 20;
