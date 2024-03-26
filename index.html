@@ -456,8 +456,7 @@
                         const generatedText = response.data[0].generated_text.substring(response.data[0]
                             .generated_text
                             .indexOf('... '));
-                        const fact = previousResponse + generatedText;
-                        previousFacts.push(fact);
+                        previousFacts.push(generatedText);
                         // Store previous facts in localStorage
                         localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                         typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
