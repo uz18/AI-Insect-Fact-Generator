@@ -432,7 +432,36 @@ content: "⠏";
                     }
                 }
 
-                // ... (rest of the code remains the same) ...
+                
+                // Challenges passed or cookie exists, proceed with generating the response
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+                }, 90000);
+                axios.post(apiUrl, prompt, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
+                    .then(response => {
+                        clearTimeout(timeoutId);
+                        document.getElementById('loading').style.display = 'none';
+                        const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text
+                            .indexOf('... '));
+                        const fact = previousResponse + generatedText;
+                        previousFacts.push(fact);
+                        // Store previous facts in localStorage
+                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+                        generateImage(fact);
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId);
+                        showNotification('Error ⚠️', error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    });
+                    
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -481,7 +510,43 @@ content: "⠏";
                     }
                 }
 
-                // ... (rest of the code remains the same) ...
+                
+                // Challenges passed or cookie exists, proceed with generating the image
+                const controller = new AbortController();
+                const timeoutId2 = setTimeout(() => {
+                    controller.abort();
+                    showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+                }, 90000);
+                axios.post("https://insectserver-qse3.onrender.com/generate-image", {
+                    "fact": fact
+                }, {
+                    'Content-Type': 'application/json',
+                    signal: controller.signal
+                })
+                    .then(response => {
+                        clearTimeout(timeoutId2);
+                        if (response.data.photoURL.includes("https://pixabay.com")) {
+                            document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
+                                '" alt="Insect Image">';
+                            document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + response.data
+                                .inferencedData;
+                            document.getElementById('image-credit').innerHTML = '<a href="' + response.data
+                                .photoCredit + '">' + response.data.photoCredit + '</a>';
+                        } else {
+                            showNotification('Error ⚠️', response.data.error);
+                            document.getElementById('regenerate-btn').style.display = 'block';
+                            document.getElementById('loading').style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId2);
+                        showNotification('Error ⚠️', error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    });
+
+                
+
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
