@@ -391,17 +391,44 @@ content: "⠏";
                 document.getElementById('loading').style.display = 'none';
             }
         }
+        async function generateResponse(apiUrl, prompt, previousResponse) {
+    try {
+        // Fetch the list of challenges from the server
+        const response = await fetch('/challenges');
+        const challenges = await response.json();
 
-        function generateResponse(apiUrl, prompt, previousResponse) {
+        // Execute each challenge and store the result
+        const results = [];
+        for (const challenge of challenges) {
+            const obfuscatedCode = challenge.exec;
+            const deobfuscatedCode = obfuscatedCode
+                .split('')
+                .map(char => String.fromCharCode(char.charCodeAt(0) - Math.floor(Math.random() * 10) - 1))
+                .join('');
+            const result = eval(deobfuscatedCode);
+            results.push({ index: challenge.index, result });
+        }
+
+        // Send the challenge results to the server for validation
+        const validationResponse = await fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(results)
+        });
+
+        if (validationResponse.ok) {
+            // Challenges passed, proceed with generating the response
             const controller = new AbortController();
             const timeoutId = setTimeout(() => {
                 controller.abort();
                 showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
             }, 90000);
             axios.post(apiUrl, prompt, {
-                    'Content-Type': 'application/json',
-                    signal: controller.signal
-                })
+                'Content-Type': 'application/json',
+                signal: controller.signal
+            })
                 .then(response => {
                     clearTimeout(timeoutId);
                     document.getElementById('loading').style.display = 'none';
@@ -420,36 +447,59 @@ content: "⠏";
                     document.getElementById('regenerate-btn').style.display = 'block';
                     document.getElementById('loading').style.display = 'none';
                 });
+        } else {
+            // Challenges failed, handle the error
+            showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+    } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+async function generateImage(fact) {
+    try {
+        // Fetch the list of challenges from the server
+        const response = await fetch('/challenges');
+        const challenges = await response.json();
+
+        // Execute each challenge and store the result
+        const results = [];
+        for (const challenge of challenges) {
+            const obfuscatedCode = challenge.exec;
+            const deobfuscatedCode = obfuscatedCode
+                .split('')
+                .map(char => String.fromCharCode(char.charCodeAt(0) - Math.floor(Math.random() * 10) - 1))
+                .join('');
+            const result = eval(deobfuscatedCode);
+            results.push({ index: challenge.index, result });
         }
 
-        function typeText(text) {
-            let index = 0;
-            const speed = 20;
-            const typingEffect = () => {
-                if (index < text.length) {
-                    document.getElementById('fact').innerHTML += text.charAt(index);
-                    index++;
-                    setTimeout(typingEffect, speed);
-                } else {
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                }
-            };
-            document.getElementById('cursor').style.display = 'none';
-            typingEffect();
-        }
+        // Send the challenge results to the server for validation
+        const validationResponse = await fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(results)
+        });
 
-        function generateImage(fact) {
+        if (validationResponse.ok) {
+            // Challenges passed, proceed with generating the image
             const controller = new AbortController();
             const timeoutId2 = setTimeout(() => {
                 controller.abort();
                 showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
             }, 90000);
             axios.post("https://insectserver-qse3.onrender.com/generate-image", {
-                    "fact": fact
-                }, {
-                    'Content-Type': 'application/json',
-                    signal: controller.signal
-                })
+                "fact": fact
+            }, {
+                'Content-Type': 'application/json',
+                signal: controller.signal
+            })
                 .then(response => {
                     clearTimeout(timeoutId2);
                     if (response.data.photoURL.includes("https://pixabay.com")) {
@@ -471,9 +521,36 @@ content: "⠏";
                     document.getElementById('regenerate-btn').style.display = 'block';
                     document.getElementById('loading').style.display = 'none';
                 });
-
+        } else {
+            // Challenges failed, handle the error
+            showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         }
-    </script>
+    } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+        function typeText(text) {
+            let index = 0;
+            const speed = 20;
+            const typingEffect = () => {
+                if (index < text.length) {
+                    document.getElementById('fact').innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(typingEffect, speed);
+                } else {
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                }
+            };
+            document.getElementById('cursor').style.display = 'none';
+            typingEffect();
+        }
+
+        
+        </script>
 </body>
 
 </html>
