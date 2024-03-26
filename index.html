@@ -418,17 +418,32 @@
                     });
                 }
 
+                let submissionResponse;
                 // Submit the challenge results using Axios
-                const submissionResponse = await axios.post('https://insectserver-qse3.onrender.com/submit', {
-                    'challenge-result': btoa(JSON.stringify(results))
-                });
+                try {
+                    submissionResponse = await axios.post('https://insectserver-qse3.onrender.com/submit', {
+                        'challenge-result': btoa(JSON.stringify(results))
+                    });
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        // Browser verification failed (bot detected)
+                        showNotification('Browser Verification Failed 🤖',
+                            'Please ensure that you are using a supported browser and have JavaScript enabled.');
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                        return;
+                    } else {
+                        // Other error occurred
+                        throw error;
+                    }
+                }
 
                 let token = null;
                 if (submissionResponse.status === 200) {
                     token = submissionResponse.data.cookie; // Get the token from the response
                 } else {
                     // Challenges failed, handle the error
-                    showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+                    showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
                     document.getElementById('regenerate-btn').style.display = 'block';
                     document.getElementById('loading').style.display = 'none';
                     return;
