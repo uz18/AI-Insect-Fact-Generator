@@ -425,7 +425,7 @@ content: "⠏";
 
                     if (!validationResponse.ok) {
                         // Challenges failed, handle the error
-                        showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+                        showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
                         return;
@@ -474,7 +474,7 @@ content: "⠏";
 
                     if (!validationResponse.ok) {
                         // Challenges failed, handle the error
-                        showNotification('Error ⚠️', 'Challenges validation failed. Please try again.');
+                        showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
                         return;
@@ -488,7 +488,7 @@ content: "⠏";
                 document.getElementById('loading').style.display = 'none';
             }
         }
-        
+
         function typeText(text) {
             let index = 0;
             const speed = 20;
