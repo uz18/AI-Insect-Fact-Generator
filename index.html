@@ -360,9 +360,7 @@
                 document.getElementById('generate-btn').style.display = 'none';
 
 
-                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {
-                    "prompt": prompt
-                }, '')
+                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -391,16 +389,14 @@
                 document.getElementById('image-credit').innerHTML = '';
                 document.getElementById('regenerate-btn').style.display = 'none';
 
-                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", {
-                    "prompt": prompt
-                }, '');
+                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
             }
         }
-        async function generateResponse(apiUrl, prompt, previousResponse) {
+        async function generateResponse(apiUrl, prompt) {
             try {
                 // Fetch the list of challenges from the server
                 const response = await axios.get('https://insectserver-qse3.onrender.com/challenges');
