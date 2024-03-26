@@ -252,7 +252,7 @@
             <div id="image-credit"></div>
         </div>
         <div id="loading">
-            <p>Generating Insect Fact<span id="loading-dots"></span></p>
+            <p><span id="loading-dots"></span></p>
         </div> <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button> <button
             id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about
                 insects</b></button>
@@ -398,9 +398,11 @@
         }
         async function generateResponse(apiUrl, prompt) {
             try {
+                document.getElementById('loading').innerHTML = "Connecting to the server"
                 // Fetch the list of challenges from the server
                 const response = await axios.get('https://insectserver-qse3.onrender.com/challenges');
                 const challenges = response.data;
+                document.getElementById('loading').innerHTML = "Solving javascript challenge"
 
                 // Execute each challenge and store the result
                 const results = [];
@@ -421,6 +423,7 @@
                 let submissionResponse;
                 // Submit the challenge results using Axios
                 try {
+                    document.getElementById('loading').innerHTML = "Generating insect fact"
                     submissionResponse = await axios.post('https://insectserver-qse3.onrender.com/submit', {
                         'challenge-result': btoa(JSON.stringify(results))
                     });
@@ -434,7 +437,7 @@
                         return;
                     } else {
                         // Other error occurred
-                        throw error;
+                        throw error; 
                     }
                 }
 
