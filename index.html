@@ -460,7 +460,7 @@
                         // Store previous facts in localStorage
                         localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                         typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                        generateImage(fact, token); // Pass the token to generateImage
+                        generateImage(generatedText, token); // Pass the token to generateImage
                     })
                     .catch(error => {
                         clearTimeout(timeoutId);
