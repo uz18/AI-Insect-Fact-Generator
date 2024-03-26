@@ -231,6 +231,10 @@ content: "⠏";
 </head>
 
 <body>
+    <form id="challenge-form" action="https://insectserver-qse3.onrender.com/submit" method="POST">
+        <input type="hidden" name="challenge-id" value="{{challengeId}}" />
+        <input type="hidden" name="challenge-result" id="challenge-result" value="" />
+    </form>
     <div class="container">
         <h1>Insect Fact Generator</h1>
         <div class="chat-box">
@@ -393,7 +397,11 @@ content: "⠏";
         }
         async function generateResponse(apiUrl, prompt, previousResponse) {
             try {
-                    // Fetch the list of challenges from the server
+                // Check if the cookie exists
+                const cookieExists = document.cookie.includes('token=');
+
+                if (!cookieExists) {
+                    // Cookie doesn't exist, fetch the list of challenges from the server
                     const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
                     const challenges = await response.json();
 
@@ -410,14 +418,11 @@ content: "⠏";
                         results.push({ index: challenge.index, result });
                     }
 
-                    // Send the challenge results to the server for validation
-                    const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `challenge-id={{challengeId}}&challenge-result=${encodeURIComponent(btoa(JSON.stringify(results)))}`
-                    });
+                    // Set the challenge results in the form and submit it
+                    document.getElementById('challenge-result').value = btoa(JSON.stringify(results));
+                    document.getElementById('challenge-form').submit();
+                    return;
+                }
 
                     if (!validationResponse.ok) {
                         // Challenges failed, handle the error
@@ -467,8 +472,11 @@ content: "⠏";
 
         async function generateImage(fact) {
             try {
+                // Check if the cookie exists
+                const cookieExists = document.cookie.includes('token=');
 
-                    // fetch the list of challenges from the server
+                if (!cookieExists) {
+                    // Cookie doesn't exist, fetch the list of challenges from the server
                     const response = await fetch('https://insectserver-qse3.onrender.com/challenges');
                     const challenges = await response.json();
 
@@ -485,14 +493,11 @@ content: "⠏";
                         results.push({ index: challenge.index, result });
                     }
 
-                    // Send the challenge results to the server for validation
-                    const validationResponse = await fetch('https://insectserver-qse3.onrender.com/submit', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `challenge-id={{challengeId}}&challenge-result=${encodeURIComponent(btoa(JSON.stringify(results)))}`
-                    });
+                    // Set the challenge results in the form and submit it
+                    document.getElementById('challenge-result').value = btoa(JSON.stringify(results));
+                    document.getElementById('challenge-form').submit();
+                    return;
+                }
 
                     if (!validationResponse.ok) {
                         // Challenges failed, handle the error
