@@ -360,7 +360,7 @@
                 document.getElementById('generate-btn').style.display = 'none';
 
 
-                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", prompt);
+                generateResponse("https://insectserver.fly.dev/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -389,7 +389,7 @@
                 document.getElementById('image-credit').innerHTML = '';
                 document.getElementById('regenerate-btn').style.display = 'none';
 
-                generateResponse("https://insectserver-qse3.onrender.com/generate-fact", prompt);
+                generateResponse("https://insectserver.fly.dev/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -406,7 +406,7 @@
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                const response = await axios.get('https://insectserver-qse3.onrender.com/challenges', {signal: controllerConnect.signal})
+                const response = await axios.get('https://insectserver.fly.dev/challenges', {signal: controllerConnect.signal})
                 clearTimeout(timeoutIdConnect);
                 const challenges = response.data;
                 document.getElementById('loading').innerHTML = "Solving javascript challenge  "
@@ -431,7 +431,7 @@
                 // Submit the challenge results using Axios
                 try {
                     document.getElementById('loading').innerHTML = "Generating insect fact  "
-                    submissionResponse = await axios.post('https://insectserver-qse3.onrender.com/submit', {
+                    submissionResponse = await axios.post('https://insectserver.fly.dev/submit', {
                         'challenge-result': btoa(JSON.stringify(results))
                     });
                 } catch (error) {
@@ -509,7 +509,7 @@
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                axios.post('https://insectserver-qse3.onrender.com/generate-image', {
+                axios.post('https://insectserver.fly.dev/generate-image', {
                         fact: fact,
                         token: token // Include the token in the request body
                     }, {
