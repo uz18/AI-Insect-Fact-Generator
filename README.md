@@ -3,7 +3,7 @@ Webpage which uses the Hugging Face and Pixabay API to create a unique insect fa
 
 https://uz18.github.io/AI-Insect-Fact-Generator
 
-Please note that the actual logic is handled on a separate webserver in an attempt to mask my API keys, note that this may add some time to your initial request after periods of inactivity
+Please note that the actual logic is handled on a separate webserver in an attempt to mask my API keys, keep in mind that this may add some time to your initial request after periods of inactivity
 
 Model used for fact generation - https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1
 
