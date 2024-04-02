@@ -10,4 +10,4 @@ Model used for fact generation - https://huggingface.co/mistralai/Mixtral-8x7B-I
 Model used for insect name inferencing - https://huggingface.co/google-bert/bert-large-uncased-whole-word-masking-finetuned-squad
 
 Javascript is required to run this webpage in a basic attempt to prevent spam. No cookies are stored on your device, and no identifiable information is collected.
-To see a more indepth and secure antispam solution I am working on check out https://antibot.fly.dev/
+To see a more indepth and secure antispam solution I am working on check out https://github.com/uz18/antiSpam-POC
