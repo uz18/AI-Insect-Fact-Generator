@@ -431,6 +431,10 @@
                 if (event.data.type === 'token') {
                     console.log("got my token woohoo")
                     generateFact(apiUrl,prompt,event.data.token)
+                }else if (event.data.type === 'error'){
+                    showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
                 }else{
                     console.warn('Unexpected message from iframe:', event.data);
                 }
