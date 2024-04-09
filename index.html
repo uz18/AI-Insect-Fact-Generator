@@ -422,9 +422,12 @@
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
                 // Check the message type
-                if (event.data.type === 'token') {
-                    handleChallengeResponse(event.data.token);
-                } else {
+                if (event.data.type === 'challenge') {
+                    handleChallengeResponse(event.data.challenge);
+                } else if(event.data.type === 'token') {
+                    console.log(prompt)
+                    console.log(event.data.token)
+                }else {
                     console.warn('Unexpected message from iframe:', event.data);
                 }
             } else {
@@ -433,14 +436,13 @@
         }
 
         // Function to handle the response from /challenges
-        function handleChallengeResponse(token) {
+        function handleChallengeResponse(challenge) {
             document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
 
             (async function() {
     try {
-      let decodedCode = atob(token);
+      let decodedCode = atob(challenge);
       const script = document.createElement('script');
-      script.nonce = "<%= nonce %>";
       script.textContent = decodedCode;
       document.body.appendChild(script);
       await new Promise((resolve) => {
