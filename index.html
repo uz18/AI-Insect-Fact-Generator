@@ -430,7 +430,7 @@
             } else if (event.origin === 'https://'+document.domain) {
                 if (event.data.type === 'token') {
                     console.log("got my token woohoo")
-                    console.log(event.data.token)
+                    generateFact(apiUrl,prompt,event.data.token)
                 }else{
                     console.warn('Unexpected message from iframe:', event.data);
                 }
@@ -464,6 +464,48 @@
     }
 }
 
+async function generateFact(apiUrl, prompt, token) {
+            try {
+                // Proceed with generating the response
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    showNotification('Timeout ⚠️',
+                        'The request is taking longer than expected. Please try again.');
+                }, 90000);
+                axios.post(apiUrl, {
+                        prompt: prompt,
+                        token: token // Include the token in the request body
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        signal: controller.signal
+                    })
+                    .then(response => {
+                        clearTimeout(timeoutId);
+                        document.getElementById('loading').style.display = 'none';
+                        const generatedText = response.data[0].generated_text.substring(response.data[0]
+                            .generated_text
+                            .indexOf('... '));
+                        previousFacts.push(generatedText);
+                        // Store previous facts in localStorage
+                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+                        generateImage(generatedText, token); // Pass the token to generateImage
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId);
+                        showNotification('Error ⚠️', error);
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    });
+            } catch (error) {
+                showNotification('Error ⚠️', error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
 async function generateImage(fact, token) {
             try {
                 // Proceed with generating the image
