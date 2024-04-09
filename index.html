@@ -409,6 +409,7 @@
 
         // Listen for the message event from the iframe
         window.addEventListener('message', function(event) {
+            console.log("listened")
             if (event.origin === 'https://antibot.dev') {
                 handleChallengeResponse(event.data);
             }
