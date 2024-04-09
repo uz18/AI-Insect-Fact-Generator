@@ -405,10 +405,12 @@
         challengeForm.action = 'https://antibot.dev/challenges';
         challengeForm.method = 'GET';
 
-        // Create a hidden iframe to submit the challenge form
+       // Create a hidden iframe to submit the challenge form
         const iframe = document.createElement('iframe');
         iframe.name = 'challenge_iframe';
         iframe.style.display = 'none';
+        iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
+        iframe.sandbox = 'allow-scripts'; // Restrict iframe capabilities
         document.body.appendChild(iframe);
 
         // Set the target of the challenge form to the iframe
