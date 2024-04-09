@@ -496,18 +496,22 @@ async function generateFact(apiUrl, prompt, token) {
 
         factIframe.addEventListener('load', function () {
             console.log("GOT RESPONSE BOIIIII")
+            factIframe.contentWindow.postMessage({ type: 'getFact' }, 'https://antibot.dev');
         });
         // Listen for messages from the fact iframe
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
         function handleFactMessageFromIframe(event) {
-          if (event.origin === apiUrl) {
-            try {
-              const responseData = event.data;
-              if (responseData.generated_text) {
+            console.log('Handling fact message from iframe')
+            console.log(event)
+            if (event.origin === 'https://antibot.dev') {
+                // Check the message type
+                try{
+                if (event.data.type === 'fact') {
                 document.getElementById('loading').style.display = 'none';
-                const generatedText = responseData.generated_text.substring(responseData.generated_text.indexOf('... '));
+                console.log(event.data.response)
+                const generatedText = event.data.response.substring(responseData.generated_text.indexOf('... '));
                 previousFacts.push(generatedText);
                 localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                 typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
