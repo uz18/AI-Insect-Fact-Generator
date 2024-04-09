@@ -397,96 +397,89 @@
             }
         }
         async function generateResponse(apiUrl, prompt) {
-            try {
-                document.getElementById('loading').innerHTML = "Connecting to the server  "
-                // Fetch the list of challenges from the server
-                const controllerConnect = new AbortController();
-                const timeoutIdConnect = setTimeout(() => {
-                    controllerConnect.abort();
-                    showNotification('Timeout ⚠️',
-                        'The request is taking longer than expected. Please try again.');
-                }, 90000);
-                const response = await axios.get('https://antibot.dev/challenges', {signal: controllerConnect.signal})
-                clearTimeout(timeoutIdConnect);
-                const challenges = response.data;
-                document.getElementById('loading').innerHTML = "Solving javascript challenge  "
-                const result = eval(atob(challenges));
+      try {
+        document.getElementById('loading').innerHTML = "Connecting to the server  ";
 
-   
+        // Create a separate form for GET request on /challenges
+        const challengeForm = document.createElement('form');
+        challengeForm.action = 'https://antibot.dev/challenges';
+        challengeForm.method = 'GET';
 
-                let submissionResponse;
-                // Submit the challenge results using Axios
-                try {
-                    document.getElementById('loading').innerHTML = "Generating insect fact  "
-                    submissionResponse = await axios.post('https://antibot.dev/submit', {
-                        'challenge-result': btoa(JSON.stringify(results))
-                    });
-                } catch (error) {
-                    if (error.response && error.response.status === 400) {
-                        // Browser verification failed (bot detected)
-                        showNotification('Browser Verification Failed 🤖',
-                            'Please ensure that you are using a supported browser and have JavaScript enabled.');
-                        document.getElementById('regenerate-btn').style.display = 'block';
-                        document.getElementById('loading').style.display = 'none';
-                        return;
-                    } else {
-                        // Other error occurred
-                        throw error; 
-                    }
-                }
+        // Create a hidden iframe to submit the challenge form
+        const iframe = document.createElement('iframe');
+        iframe.name = 'challenge_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
 
-                let token = null;
-                if (submissionResponse.status === 200) {
-                    token = submissionResponse.data.cookie; // Get the token from the response
-                } else {
-                    // Challenges failed, handle the error
-                    showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                    document.getElementById('loading').style.display = 'none';
-                    return;
-                }
+        // Set the target of the challenge form to the iframe
+        challengeForm.target = 'challenge_iframe';
 
-                // Proceed with generating the response
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => {
-                    controller.abort();
-                    showNotification('Timeout ⚠️',
-                        'The request is taking longer than expected. Please try again.');
-                }, 90000);
-                axios.post(apiUrl, {
-                        prompt: prompt,
-                        token: token // Include the token in the request body
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        signal: controller.signal
-                    })
-                    .then(response => {
-                        clearTimeout(timeoutId);
-                        document.getElementById('loading').style.display = 'none';
-                        const generatedText = response.data[0].generated_text.substring(response.data[0]
-                            .generated_text
-                            .indexOf('... '));
-                        previousFacts.push(generatedText);
-                        // Store previous facts in localStorage
-                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                        generateImage(generatedText, token); // Pass the token to generateImage
-                    })
-                    .catch(error => {
-                        clearTimeout(timeoutId);
-                        showNotification('Error ⚠️', error);
-                        document.getElementById('regenerate-btn').style.display = 'block';
-                        document.getElementById('loading').style.display = 'none';
-                    });
-            } catch (error) {
-                showNotification('Error ⚠️', error);
-                document.getElementById('regenerate-btn').style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
-            }
+        // Submit the challenge form
+        document.body.appendChild(challengeForm);
+        challengeForm.submit();
+
+        // Function to handle the response from /challenges
+        function handleChallengeResponse(encodedChallengeCode) {
+          document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
+
+          // Decode the base64-encoded challenge code
+          const decodedChallengeCode = atob(encodedChallengeCode);
+
+          // Evaluate the decoded challenge code
+          eval(decodedChallengeCode);
         }
 
+        // Listen for the message event from the iframe
+        window.addEventListener('message', function(event) {
+          if (event.origin === 'https://antibot.dev') {
+            handleChallengeResponse(event.data);
+          }
+        }, false);
+
+        // Wait for the token to be available
+        while (typeof token === 'undefined') {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        document.getElementById('loading').innerHTML = "Generating insect fact  ";
+
+        // Proceed with generating the response using the token
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+          showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+        }, 90000);
+
+        axios.post(apiUrl, {
+          prompt: prompt,
+          token: token
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          signal: controller.signal
+        })
+        .then(response => {
+          clearTimeout(timeoutId);
+          document.getElementById('loading').style.display = 'none';
+          const generatedText = response.data[0].generated_text.substring(response.data[0].generated_text.indexOf('... '));
+          previousFacts.push(generatedText);
+          localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+          typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+          generateImage(generatedText, token);
+        })
+        .catch(error => {
+          clearTimeout(timeoutId);
+          showNotification('Error ⚠️', error);
+          document.getElementById('regenerate-btn').style.display = 'block';
+          document.getElementById('loading').style.display = 'none';
+        });
+      } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
         async function generateImage(fact, token) {
             try {
                 // Proceed with generating the image
