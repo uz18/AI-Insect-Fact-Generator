@@ -424,14 +424,16 @@
                 // Check the message type
                 if (event.data.type === 'challenge') {
                     handleChallengeResponse(event.data.challenge);
-                }else if (event.data.type === 'token') {
+                }else{
+                    console.warn('Unexpected message from iframe:', event.data);
+                }
+            } else if (event.origin === 'https://'+document.domain) {
+                if (event.data.type === 'token') {
                     console.log("got my token woohoo")
                     console.log(event.data.token)
                 }else{
                     console.warn('Unexpected message from iframe:', event.data);
                 }
-            } else {
-                console.warn('Message received from unexpected origin:', event.origin);
             }
         }
 
