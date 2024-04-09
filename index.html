@@ -410,35 +410,25 @@
         // Listen for the load event from the iframe
         iframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
-            console.log("loaded")
-            iframe.contentWindow.postMessage('getToken', 'https://antibot.dev');
+            console.log("loaded");
+            iframe.contentWindow.postMessage({ type: 'getToken' }, 'https://antibot.dev');
         }, false);
 
         // Listen for messages from the iframe
-        iframe.addEventListener('message', event => {
-            console.log('iframe')
-  console.log(event)
-});
- // Listen for messages from the iframe
- iframe.contentWindow.addEventListener('message', event => {
-            console.log('contentwindow')
-  console.log(event)
-});
+        window.addEventListener('message', handleMessageFromIframe, false);
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
-            console.log("got message from iframe")
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
-                // Check if the message contains the token
-                if (event.data.token) {
+                // Check the message type
+                if (event.data.type === 'token') {
                     handleChallengeResponse(event.data.token);
                 } else {
-                    console.warn('Message from iframe does not contain token:', event.data);
+                    console.warn('Unexpected message from iframe:', event.data);
                 }
             } else {
                 console.warn('Message received from unexpected origin:', event.origin);
-                // Optionally, you can choose to ignore messages from unexpected origins
             }
         }
 
