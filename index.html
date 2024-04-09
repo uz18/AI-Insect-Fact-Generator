@@ -338,228 +338,143 @@
             window.history.back();
         }
 
-        function generateFact() {
-            try {
-                console.log('ok buddy')
-                let prompt =
-                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-                        console.log('got it')
-                // Append previously generated facts to the prompt
-                for (let i = 0; i < previousFacts.length; i++) {
-                    prompt += ` ${previousFacts[i]}</s>`;
-                }
-                console.log('ohhh okay')
-                prompt +=
-                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
-                console.log('ok bud')
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('fact').innerHTML = '';
-                document.getElementById('image').innerHTML = '';
-                document.getElementById('image-text').innerHTML = '';
-                document.getElementById('image-credit').innerHTML = '';
-                document.getElementById('generate-btn').style.display = 'none';
-                console.log('generating response')
-
-                generateResponse("https://antibot.dev/generate-fact", prompt);
-            } catch (error) {
-                console.log(error)
-                showNotification('Error ⚠️', error);
-                document.getElementById('regenerate-btn').style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        function regenerateFact() {
-            try {
-                let prompt =
-                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-
-                // Append previously generated facts to the prompt
-                for (let i = 0; i < previousFacts.length; i++) {
-                    prompt += ` ${previousFacts[i]}</s>`;
-                }
-
-                // Append the original prompt without the <s> tag
-                prompt +=
-                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('fact').innerHTML = '';
-                document.getElementById('image').innerHTML = '';
-                document.getElementById('image-text').innerHTML = '';
-                document.getElementById('image-credit').innerHTML = '';
-                document.getElementById('regenerate-btn').style.display = 'none';
-
-                generateResponse("https://antibot.dev/generate-fact", prompt);
-            } catch (error) {
-                showNotification('Error ⚠️', error);
-                document.getElementById('regenerate-btn').style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
         async function generateResponse(apiUrl, prompt) {
-    try {
-        document.getElementById('loading').innerHTML = "Connecting to the server  ";
-
-        // Create a hidden iframe to submit the challenge form
-        const iframe = document.createElement('iframe');
-        iframe.name = 'challenge_iframe';
-        iframe.style.display = 'none';
-        iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
-        document.body.appendChild(iframe);
-
-        // Listen for the load event from the iframe
-        iframe.addEventListener('load', () => {
-            // Once the iframe is loaded, send a message to request the token
-            iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
-        }, false);
-
-        // Listen for messages from the iframe
-        window.addEventListener('message', handleMessageFromIframe, false);
-
-        // Function to handle messages received from the iframe
-        function handleMessageFromIframe(event) {
-            console.log(event)
-            // Ensure that the message is from the expected origin
-            if (event.origin === 'https://antibot.dev') {
-                // Check the message type
-                if (event.data.type === 'challenge') {
-                    handleChallengeResponse(event.data.challenge);
-                }else{
-                    console.warn('Unexpected message from iframe:', event.data);
-                }
-            } else if (event.origin === 'https://'+document.domain) {
-                if (event.data.type === 'token') {
-                    console.log("got my token woohoo")
-                    generateFact(apiUrl,prompt,event.data.token)
-                }else if (event.data.type === 'error'){
-                    showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                    document.getElementById('loading').style.display = 'none';
-                }else{
-                    console.warn('Unexpected message from iframe:', event.data);
-                }
-            }
-        }
-
-        // Function to handle the response from /challenges
-        function handleChallengeResponse(challenge) {
-            document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
-            (async function() {
-    try {
-      let decodedCode = atob(challenge);
-      const script = document.createElement('script');
-      script.textContent = decodedCode;
-      document.body.appendChild(script);
-      await new Promise((resolve) => {
-        script.onload = resolve;
-      });
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  })();
-        }
-        
-        // Function to execute the code received from /submit    
-
-    } catch (error) {
-        showNotification('Error ⚠️', error);
-        document.getElementById('regenerate-btn').style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
-    }
-}
-
-async function generateFact(apiUrl, prompt, token) {
             try {
-                // Proceed with generating the response
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => {
-                    controller.abort();
-                    showNotification('Timeout ⚠️',
-                        'The request is taking longer than expected. Please try again.');
-                }, 90000);
-                fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                        prompt: prompt,
-                        token: token
-                        }),
-                        signal: controller.signal                      
-                    })
-                    .then(response => {
-                        console.log(response)
-                        clearTimeout(timeoutId);
-                        document.getElementById('loading').style.display = 'none';
-                        const generatedText = response.data[0].generated_text.substring(response.data[0]
-                            .generated_text
-                            .indexOf('... '));
-                        previousFacts.push(generatedText);
-                        // Store previous facts in localStorage
-                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                        generateImage(generatedText, token); // Pass the token to generateImage
-                    })
-                    .catch(error => {
-                        clearTimeout(timeoutId);
-                        showNotification('Error ⚠️', error);
-                        document.getElementById('regenerate-btn').style.display = 'block';
-                        document.getElementById('loading').style.display = 'none';
-                    });
-            } catch (error) {
-                showNotification('Error ⚠️', error);
-                document.getElementById('regenerate-btn').style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-async function generateImage(fact, token) {
-            try {
-                // Proceed with generating the image
-                const controller = new AbortController();
-                const timeoutId2 = setTimeout(() => {
-                    controller.abort();
-                    showNotification('Timeout ⚠️',
-                        'The request is taking longer than expected. Please try again.');
-                }, 90000);
-                fetch('https://antibot.dev/generate-image', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                        fact: fact,
-                        token: token
-                        }),
-                        signal: controller.signal                      
-                    })
-                    .then(response => {
-                        clearTimeout(timeoutId2);
-                        console.log(response)
-                        if (response.data.photoURL.includes('https://pixabay.com')) {
-                            document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
-                                '" alt="Insect Image">';
-                            document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' +
-                                response.data
-                                .inferencedData;
-                            document.getElementById('image-credit').innerHTML = '<a href="' + response.data
-                                .photoCredit + '">' + response.data.photoCredit + '</a>';
+                document.getElementById('loading').innerHTML = "Connecting to the server  ";
+
+                // Create a hidden iframe to submit the challenge form
+                const iframe = document.createElement('iframe');
+                iframe.name = 'challenge_iframe';
+                iframe.style.display = 'none';
+                iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
+                document.body.appendChild(iframe);
+
+                // Listen for the load event from the iframe
+                iframe.addEventListener('load', () => {
+                    // Once the iframe is loaded, send a message to request the token
+                    iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
+                }, false);
+
+                // Listen for messages from the iframe
+                window.addEventListener('message', handleMessageFromIframe, false);
+
+                // Function to handle messages received from the iframe
+                function handleMessageFromIframe(event) {
+                    console.log(event);
+                    // Ensure that the message is from the expected origin
+                    if (event.origin === 'https://antibot.dev') {
+                        // Check the message type
+                        if (event.data.type === 'challenge') {
+                            handleChallengeResponse(event.data.challenge, apiUrl, prompt);
                         } else {
-                            showNotification('Error ⚠️', response.data.error);
+                            console.warn('Unexpected message from iframe:', event.data);
+                        }
+                    } else if (event.origin === 'https://' + document.domain) {
+                        if (event.data.type === 'error') {
+                            showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
                             document.getElementById('regenerate-btn').style.display = 'block';
                             document.getElementById('loading').style.display = 'none';
+                        } else {
+                            console.warn('Unexpected message from iframe:', event.data);
                         }
-                    })
-                    .catch(error => {
-                        clearTimeout(timeoutId2);
-                        showNotification('Error ⚠️', error);
-                        document.getElementById('regenerate-btn').style.display = 'block';
-                        document.getElementById('loading').style.display = 'none';
-                    });
+                    }
+                }
+
+                // Function to handle the response from /challenges
+                async function handleChallengeResponse(challenge, apiUrl, prompt) {
+                    document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
+                    try {
+                        let decodedCode = atob(challenge);
+                        const script = document.createElement('script');
+                        script.textContent = decodedCode;
+                        document.body.appendChild(script);
+                        await new Promise((resolve) => {
+                            script.onload = resolve;
+                        });
+
+                        // Wait for the token to be available (handled via message event)
+                        window.addEventListener('message', async function(event) {
+                            if (event.origin === 'https://antibot.dev' && event.data.type === 'token') {
+                                const token = event.data.token;
+                                document.getElementById('loading').innerHTML = "Generating insect fact  ";
+
+                                try {
+                                    // Proceed with generating the response
+                                    const controller = new AbortController();
+                                    const timeoutId = setTimeout(() => {
+                                        controller.abort();
+                                        showNotification('Timeout ⚠️', 'The request is taking longer than expected. Please try again.');
+                                    }, 90000);
+
+                                    const response = await fetch(apiUrl, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            prompt: prompt,
+                                            token: token
+                                        }),
+                                        signal: controller.signal
+                                    });
+
+                                    clearTimeout(timeoutId);
+                                    document.getElementById('loading').style.display = 'none';
+
+                                    if (response.ok) {
+                                        const data = await response.json();
+                                        const generatedText = data[0].generated_text.substring(data[0].generated_text.indexOf('... '));
+                                        previousFacts.push(generatedText);
+                                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+
+                                        // Generate the image
+                                        const imageResponse = await fetch('https://antibot.dev/generate-image', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                fact: generatedText,
+                                                token: token
+                                            }),
+                                            signal: controller.signal
+                                        });
+
+                                        if (imageResponse.ok) {
+                                            const imageData = await imageResponse.json();
+                                            if (imageData.photoURL.includes('https://pixabay.com')) {
+                                                document.getElementById('image').innerHTML = '<img src="' + imageData.photoURL + '" alt="Insect Image">';
+                                                document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + imageData.inferencedData;
+                                                document.getElementById('image-credit').innerHTML = '<a href="' + imageData.photoCredit + '">' + imageData.photoCredit + '</a>';
+                                            } else {
+                                                showNotification('Error ⚠️', imageData.error);
+                                                document.getElementById('regenerate-btn').style.display = 'block';
+                                                document.getElementById('loading').style.display = 'none';
+                                            }
+                                        } else {
+                                            showNotification('Error ⚠️', 'Failed to generate image. Please try again.');
+                                            document.getElementById('regenerate-btn').style.display = 'block';
+                                            document.getElementById('loading').style.display = 'none';
+                                        }
+                                    } else {
+                                        showNotification('Error ⚠️', 'Failed to generate fact. Please try again.');
+                                        document.getElementById('regenerate-btn').style.display = 'block';
+                                        document.getElementById('loading').style.display = 'none';
+                                    }
+                                } catch (error) {
+                                    showNotification('Error ⚠️', error);
+                                    document.getElementById('regenerate-btn').style.display = 'block';
+                                    document.getElementById('loading').style.display = 'none';
+                                }
+                            }
+                        }, false);
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
             }
         }
-
         function typeText(text) {
             let index = 0;
             const speed = 20;
