@@ -410,8 +410,7 @@
         // Listen for the load event from the iframe
         iframe.addEventListener('load', () => {
             const contentWindow = iframe.contentWindow;
-            console.log(contentWindow)
-            console.log(event)
+            console.log(event.data)
             // You can add further checks here if needed
             handleChallengeResponse(contentWindow);
         }, false);
@@ -422,6 +421,8 @@
             document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
 
             // Decode the base64-encoded challenge code
+            const encodedChallengeCode = iframe.contentWindow.token;
+            console.log(contentWindow.document)
             const decodedChallengeCode = atob(encodedChallengeCode);
 
             // Evaluate the decoded challenge code
