@@ -419,6 +419,7 @@
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
+            console.log(event)
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
                 // Check the message type
@@ -435,7 +436,6 @@
         // Function to handle the response from /challenges
         function handleChallengeResponse(challenge) {
             document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
-            console.log("Solved?");
             (async function() {
     try {
       let decodedCode = atob(challenge);
@@ -453,7 +453,6 @@
         function go(){
             console.log("im going brudda")
         }
-        window.addEventListener('message', go , false);
         // Wait for the token to be available (handled via message event)
         document.getElementById('loading').innerHTML = "Generating insect fact  ";
         
