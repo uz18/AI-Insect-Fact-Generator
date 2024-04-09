@@ -397,74 +397,77 @@
             }
         }
         async function generateResponse(apiUrl, prompt) {
-    try {
-        document.getElementById('loading').innerHTML = "Connecting to the server  ";
+  try {
+    document.getElementById('loading').innerHTML = "Connecting to the server  ";
 
-        // Create a hidden iframe to submit the challenge form
-        const iframe = document.createElement('iframe');
-        iframe.name = 'challenge_iframe';
-        iframe.style.display = 'none';
-        iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
-        document.body.appendChild(iframe);
+    // Create a hidden iframe to submit the challenge form
+    const iframe = document.createElement('iframe');
+    iframe.name = 'challenge_iframe';
+    iframe.style.display = 'none';
+    iframe.src = 'https://antibot.dev/submit'; // Set the src attribute to the /submit endpoint
+    document.body.appendChild(iframe);
 
-        // Listen for the load event from the iframe
-        iframe.addEventListener('load', () => {
-            // Once the iframe is loaded, send a message to request the token
-            console.log("loaded");
-            iframe.contentWindow.postMessage({ type: 'getToken' }, 'https://antibot.dev');
-        }, false);
+    // Listen for the load event from the iframe
+    iframe.addEventListener('load', () => {
+      // Once the iframe is loaded, send a message to request the token
+      console.log("loaded");
+      iframe.contentWindow.postMessage({ type: 'getToken' }, 'https://antibot.dev');
+    }, false);
 
-        // Listen for messages from the iframe
-        window.addEventListener('message', handleMessageFromIframe, false);
+    // Listen for messages from the iframe
+    window.addEventListener('message', handleMessageFromIframe, false);
 
-        // Function to handle messages received from the iframe
-        function handleMessageFromIframe(event) {
-            // Ensure that the message is from the expected origin
-            if (event.origin === 'https://antibot.dev') {
-                // Check the message type
-                if (event.data.type === 'token') {
-                    handleChallengeResponse(event.data.token);
-                } else {
-                    console.warn('Unexpected message from iframe:', event.data);
-                }
+    // Function to handle messages received from the iframe
+    function handleMessageFromIframe(event) {
+      // Ensure that the message is from the expected origin
+      if (event.origin === 'https://antibot.dev') {
+        // Check the message type
+        if (event.data.type === 'token') {
+          const token = event.data.token;
+          document.getElementById('loading').innerHTML = "Generating insect fact  ";
+
+          // Proceed with generating the fact using the token
+          axios.post(apiUrl, { prompt: prompt, token: token }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(response => {
+            if (response.status === 200) {
+              const fact = response.data[0].generated_text;
+              previousFacts.push(fact);
+              localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+              document.getElementById('loading').style.display = 'none';
+              typeText(fact);
+              generateImage(fact, token);
+            } else if (response.status === 500) {
+              // Token is done, regenerate it
+              showNotification('Token Expired ⚠️', 'The token has expired. Regenerating a new token.');
+              generateResponse(apiUrl, prompt);
             } else {
-                console.warn('Message received from unexpected origin:', event.origin);
+              showNotification('Error ⚠️', response.data.error);
+              document.getElementById('regenerate-btn').style.display = 'block';
+              document.getElementById('loading').style.display = 'none';
             }
+          })
+          .catch(error => {
+            showNotification('Error ⚠️', error);
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+          });
+        } else {
+          console.warn('Unexpected message from iframe:', event.data);
         }
-
-        // Function to handle the response from /challenges
-        function handleChallengeResponse(token) {
-            document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
-
-            (async function() {
-    try {
-      let decodedCode = atob(token);
-      const script = document.createElement('script');
-      script.nonce = "<%= nonce %>";
-      script.textContent = decodedCode;
-      document.body.appendChild(script);
-      await new Promise((resolve) => {
-        script.onload = resolve;
-      });
-    } catch (error) {
-      console.error('Error:', error);
+      } else {
+        console.warn('Message received from unexpected origin:', event.origin);
+      }
     }
-  })();
-        }
-
-        // Wait for the token to be available (handled via message event)
-        document.getElementById('loading').innerHTML = "Generating insect fact  ";
-
-        // Proceed with generating the response using the token
-        // (Your code to submit the form and handle the response)
-
-    } catch (error) {
-        showNotification('Error ⚠️', error);
-        document.getElementById('regenerate-btn').style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
-    }
+  } catch (error) {
+    showNotification('Error ⚠️', error);
+    document.getElementById('regenerate-btn').style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+  }
 }
-
 async function generateImage(fact, token) {
             try {
                 // Proceed with generating the image
