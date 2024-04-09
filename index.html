@@ -342,13 +342,15 @@
 
         function generateFact() {
             try {
+                console.log('ok buddy')
                 let prompt =
                     `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-
+                        console.log('got it')
                 // Append previously generated facts to the prompt
                 for (let i = 0; i < previousFacts.length; i++) {
                     prompt += ` ${previousFacts[i]}</s>`;
                 }
+                console.log('ohhh okay')
                 prompt +=
                     ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
                 console.log('ok bud')
