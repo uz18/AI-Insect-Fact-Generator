@@ -487,6 +487,7 @@ async function generateFact(apiUrl, prompt, token) {
         factIframe.style.display = 'none';
         document.body.appendChild(factIframe);
 
+        document.body.appendChild(factForm); // Append the form to the document body
         factForm.submit();
 
         factIframe.onload = function() {
@@ -541,6 +542,7 @@ async function generateFact(apiUrl, prompt, token) {
         imageIframe.style.display = 'none';
         document.body.appendChild(imageIframe);
 
+        document.body.appendChild(imageForm); // Append the form to the document body
         imageForm.submit();
 
         imageIframe.onload = function() {
@@ -567,6 +569,7 @@ async function generateFact(apiUrl, prompt, token) {
         document.getElementById('loading').style.display = 'none';
       }
     }
+    
 function typeText(text) {
             let index = 0;
             const speed = 20;
