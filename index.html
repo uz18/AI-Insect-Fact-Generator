@@ -497,7 +497,8 @@ async function generateFact(apiUrl, prompt, token) {
         // Listen for the load event from the fact iframe
         factIframe.addEventListener('load', () => {
           // Extract the JSON response from the iframe's document
-          const responseText = factIframe.contentDocument.body.innerText;
+          const responseText = factIframe;
+          console.log(factIframe)
           try {
             const responseData = JSON.parse(responseText);
             if (responseData.generated_text) {
