@@ -493,6 +493,7 @@ async function generateFact(apiUrl, prompt, token) {
         });
 
         factIframe.src = apiUrl;
+        factIframe.method = 'POST'
         factIframe.onload = function() {
           factIframe.contentWindow.postMessage({ prompt: prompt, token: token }, apiUrl);
         };
@@ -534,6 +535,7 @@ async function generateFact(apiUrl, prompt, token) {
         });
 
         imageIframe.src = 'https://antibot.dev/generate-image';
+        imageIframe.method = 'POST'
         imageIframe.onload = function() {
           imageIframe.contentWindow.postMessage({ fact: fact, token: token }, 'https://antibot.dev');
         };
