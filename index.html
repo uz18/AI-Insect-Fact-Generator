@@ -418,6 +418,7 @@
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
+            console.log("got message from iframe")
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
                 // Check if the message contains the token
