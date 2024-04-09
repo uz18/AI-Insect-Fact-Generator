@@ -424,10 +424,40 @@
                 // Check the message type
                 if (event.data.type === 'challenge') {
                     handleChallengeResponse(event.data.challenge);
-                } else if(event.data.type === 'token') {
-                    console.log(prompt)
-                    console.log(event.data.token)
-                    axios.post(apiUrl, {
+                }else {
+                    console.warn('Unexpected message from iframe:', event.data);
+                }
+            } else {
+                console.warn('Message received from unexpected origin:', event.origin);
+            }
+        }
+
+        // Function to handle the response from /challenges
+        function handleChallengeResponse(challenge) {
+            document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
+            console.log("Solved?")
+            (async function() {
+    try {
+      let decodedCode = atob(challenge);
+      const script = document.createElement('script');
+      script.textContent = decodedCode;
+      document.body.appendChild(script);
+      await new Promise((resolve) => {
+        script.onload = resolve;
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  })();
+        }
+        function go(){
+            console.log("im going brudda")
+        }
+        window.addEventListener('message', go , false);
+        // Wait for the token to be available (handled via message event)
+        document.getElementById('loading').innerHTML = "Generating insect fact  ";
+        
+        axios.post(apiUrl, {
                         prompt: prompt,
                         token: event.data.token // Include the token in the request body
                     }, {
@@ -454,38 +484,6 @@
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
                     });
-                }else {
-                    console.warn('Unexpected message from iframe:', event.data);
-                }
-            } else {
-                console.warn('Message received from unexpected origin:', event.origin);
-            }
-        }
-
-        // Function to handle the response from /challenges
-        function handleChallengeResponse(challenge) {
-            document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
-
-            (async function() {
-    try {
-      let decodedCode = atob(challenge);
-      const script = document.createElement('script');
-      script.textContent = decodedCode;
-      document.body.appendChild(script);
-      await new Promise((resolve) => {
-        script.onload = resolve;
-      });
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  })();
-        }
-
-        // Wait for the token to be available (handled via message event)
-        document.getElementById('loading').innerHTML = "Generating insect fact  ";
-
-        // Proceed with generating the response using the token
-        // (Your code to submit the form and handle the response)
 
     } catch (error) {
         showNotification('Error ⚠️', error);
