@@ -493,9 +493,8 @@ async function generateFact(apiUrl, prompt, token) {
         });
 
         factIframe.src = apiUrl;
-        factIframe.method = 'POST'
         factIframe.onload = function() {
-          factIframe.contentWindow.postMessage({ prompt: prompt, token: token }, apiUrl);
+          factIframe.contentWindow.postMessage({ type: 'generateFact', prompt: prompt, token: token }, apiUrl);
         };
 
         document.getElementById('loading').innerHTML = "Generating Fact  ";
@@ -535,9 +534,8 @@ async function generateFact(apiUrl, prompt, token) {
         });
 
         imageIframe.src = 'https://antibot.dev/generate-image';
-        imageIframe.method = 'POST'
         imageIframe.onload = function() {
-          imageIframe.contentWindow.postMessage({ fact: fact, token: token }, 'https://antibot.dev');
+          imageIframe.contentWindow.postMessage({ type: 'generateImage', fact: fact, token: token }, 'https://antibot.dev');
         };
       } catch (error) {
         showNotification('Error ⚠️', error.message);
@@ -545,7 +543,7 @@ async function generateFact(apiUrl, prompt, token) {
         document.getElementById('loading').style.display = 'none';
       }
     }
-
+    
 function typeText(text) {
             let index = 0;
             const speed = 20;
