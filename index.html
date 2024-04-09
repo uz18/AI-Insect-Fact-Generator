@@ -360,7 +360,7 @@
                 document.getElementById('generate-btn').style.display = 'none';
 
 
-                generateResponse("https://insectserver.fly.dev/generate-fact", prompt);
+                generateResponse("https://antibot.dev/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -389,7 +389,7 @@
                 document.getElementById('image-credit').innerHTML = '';
                 document.getElementById('regenerate-btn').style.display = 'none';
 
-                generateResponse("https://insectserver.fly.dev/generate-fact", prompt);
+                generateResponse("https://antibot.dev/generate-fact", prompt);
             } catch (error) {
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
@@ -406,32 +406,19 @@
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                const response = await axios.get('https://insectserver.fly.dev/challenges', {signal: controllerConnect.signal})
+                const response = await axios.get('https://antibot.dev/challenges', {signal: controllerConnect.signal})
                 clearTimeout(timeoutIdConnect);
                 const challenges = response.data;
                 document.getElementById('loading').innerHTML = "Solving javascript challenge  "
+                const result = eval(atob(challenges));
 
-                // Execute each challenge and store the result
-                const results = [];
-                for (const challenge of challenges) {
-                    const deobfuscatedCode = challenge.exec
-                        .replace(/\$/g, 'a')
-                        .replace(/\#/g, 'e')
-                        .replace(/\*/g, 'i')
-                        .replace(/\%/g, 'o')
-                        .replace(/\^/g, 'u');
-                    const result = eval(deobfuscatedCode);
-                    results.push({
-                        index: challenge.index,
-                        result
-                    });
-                }
+   
 
                 let submissionResponse;
                 // Submit the challenge results using Axios
                 try {
                     document.getElementById('loading').innerHTML = "Generating insect fact  "
-                    submissionResponse = await axios.post('https://insectserver.fly.dev/submit', {
+                    submissionResponse = await axios.post('https://antibot.dev/submit', {
                         'challenge-result': btoa(JSON.stringify(results))
                     });
                 } catch (error) {
@@ -509,7 +496,7 @@
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                axios.post('https://insectserver.fly.dev/generate-image', {
+                axios.post('https://antibot.dev/generate-image', {
                         fact: fact,
                         token: token // Include the token in the request body
                     }, {
