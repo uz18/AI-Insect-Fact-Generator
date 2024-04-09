@@ -417,6 +417,15 @@
         // Submit the challenge form
         document.body.appendChild(challengeForm);
         challengeForm.submit();
+        // Listen for the message event from the iframe
+        console.log("starting listener")
+        window.addEventListener('message', function(event) {
+            console.log(event)
+          if (event.origin === 'https://antibot.dev') {
+            console.log("handling challenge response")
+            handleChallengeResponse(event.data);
+          }
+        }, false);
 
         // Function to handle the response from /challenges
         function handleChallengeResponse(encodedChallengeCode) {
@@ -428,14 +437,6 @@
           // Evaluate the decoded challenge code
           eval(decodedChallengeCode);
         }
-
-        // Listen for the message event from the iframe
-        window.addEventListener('message', function(event) {
-          if (event.origin === 'https://antibot.dev') {
-            console.log("handling challenge response")
-            handleChallengeResponse(event.data);
-          }
-        }, false);
 
         // Wait for the token to be available
         while (typeof token === 'undefined') {
