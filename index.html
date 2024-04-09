@@ -4,7 +4,6 @@
 <head>
     <link rel="icon" type="image/png" href="https://em-content.zobj.net/source/apple/271/robot_1f916.png">
     <title>Insect Fact Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -479,16 +478,17 @@ async function generateFact(apiUrl, prompt, token) {
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                axios.post(apiUrl, {
+                fetch(apiUrl, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
                         prompt: prompt,
-                        token: token // Include the token in the request body
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        signal: controller.signal
+                        token: token
+                        }),
+                        signal: controller.signal                      
                     })
                     .then(response => {
+                        console.log(response)
                         clearTimeout(timeoutId);
                         document.getElementById('loading').style.display = 'none';
                         const generatedText = response.data[0].generated_text.substring(response.data[0]
@@ -521,17 +521,18 @@ async function generateImage(fact, token) {
                     showNotification('Timeout ⚠️',
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
-                axios.post('https://antibot.dev/generate-image', {
+                fetch('https://antibot.dev/generate-image', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
                         fact: fact,
-                        token: token // Include the token in the request body
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        signal: controller.signal
+                        token: token
+                        }),
+                        signal: controller.signal                      
                     })
                     .then(response => {
                         clearTimeout(timeoutId2);
+                        console.log(response)
                         if (response.data.photoURL.includes('https://pixabay.com')) {
                             document.getElementById('image').innerHTML = '<img src="' + response.data.photoURL +
                                 '" alt="Insect Image">';
