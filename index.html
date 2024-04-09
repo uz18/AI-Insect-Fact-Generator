@@ -410,11 +410,15 @@
         // Listen for the load event from the iframe
         iframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
+            console.log("loaded")
             iframe.contentWindow.postMessage('getToken', 'https://antibot.dev');
         }, false);
 
         // Listen for messages from the iframe
-        window.addEventListener('message', handleMessageFromIframe);
+        window.addEventListener('message', event => {
+  
+  console.log(event)
+});
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
