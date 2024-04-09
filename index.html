@@ -492,10 +492,7 @@ async function generateFact(apiUrl, prompt, token) {
           }
         });
 
-        factIframe.src = apiUrl;
-        factIframe.onload = function() {
-          factIframe.contentWindow.postMessage({ type: 'generateFact', prompt: prompt, token: token }, apiUrl);
-        };
+        factIframe.src = apiUrl + '?prompt=' + encodeURIComponent(prompt) + '&token=' + encodeURIComponent(token);
 
         document.getElementById('loading').innerHTML = "Generating Fact  ";
       } catch (error) {
@@ -533,17 +530,13 @@ async function generateFact(apiUrl, prompt, token) {
           }
         });
 
-        imageIframe.src = 'https://antibot.dev/generate-image';
-        imageIframe.onload = function() {
-          imageIframe.contentWindow.postMessage({ type: 'generateImage', fact: fact, token: token }, 'https://antibot.dev');
-        };
+        imageIframe.src = 'https://antibot.dev/generate-image?fact=' + encodeURIComponent(fact) + '&token=' + encodeURIComponent(token);
       } catch (error) {
         showNotification('Error ⚠️', error.message);
         document.getElementById('regenerate-btn').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
       }
     }
-    
 function typeText(text) {
             let index = 0;
             const speed = 20;
