@@ -479,7 +479,7 @@ async function generateFact(apiUrl, prompt, token) {
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
                 fetch(apiUrl, {
-                        method: 'GET',
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                         prompt: prompt,
@@ -522,7 +522,7 @@ async function generateImage(fact, token) {
                         'The request is taking longer than expected. Please try again.');
                 }, 90000);
                 fetch('https://antibot.dev/generate-image', {
-                        method: 'GET',
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                         fact: fact,
