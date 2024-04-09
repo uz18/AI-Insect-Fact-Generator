@@ -252,8 +252,8 @@
         </div>
         <div id="loading">
             <p><span id="loading-dots"></span></p>
-        </div> <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button> 
-        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about insects</b></button>
+        </div> <button id="generate-btn" onclick="generateaFact()"><b>Tell me a fact about insects</b></button> 
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateaFact()"><b>Tell me another fact about insects</b></button>
         <div class="disclaimer-box" id='disclaimer-box'>
             <p>By using this website, you acknowledge and agree that we use your browser's "local storage" to store your
                 previous responses locally on your device. These previous responses are sent to our server solely for
@@ -338,7 +338,7 @@
             window.history.back();
         }
 
-        function generateFact() {
+        function generateaFact() {
             try {
                 console.log('ok buddy')
                 let prompt =
@@ -369,7 +369,7 @@
             }
         }
 
-        function regenerateFact() {
+        function regenerateaFact() {
             try {
                 let prompt =
                     `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
