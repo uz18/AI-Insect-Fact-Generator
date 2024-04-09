@@ -465,11 +465,13 @@
 }
 async function generateFact(apiUrl, prompt, token) {
       try {
+        // Create a hidden form to submit the generate fact request
         const factForm = document.createElement('form');
         factForm.action = apiUrl;
         factForm.method = 'POST';
         factForm.target = 'fact_iframe';
 
+        // Create hidden input fields for prompt and token
         const promptInput = document.createElement('input');
         promptInput.type = 'hidden';
         promptInput.name = 'prompt';
@@ -482,19 +484,25 @@ async function generateFact(apiUrl, prompt, token) {
         tokenInput.value = token;
         factForm.appendChild(tokenInput);
 
+        // Create a hidden iframe to submit the fact form
         const factIframe = document.createElement('iframe');
         factIframe.name = 'fact_iframe';
         factIframe.style.display = 'none';
         document.body.appendChild(factIframe);
 
+        // Submit the fact form
+        document.body.appendChild(factForm);
         factForm.submit();
 
-        factIframe.onload = function() {
+        // Listen for the load event from the fact iframe
+        factIframe.addEventListener('load', () => {
+          // Extract the JSON response from the iframe's document
+          const responseText = factIframe.contentDocument.body.innerText;
           try {
-            const responseData = JSON.parse(factIframe.contentWindow.document.body.innerText);
-            if (responseData[0] && responseData[0].generated_text) {
+            const responseData = JSON.parse(responseText);
+            if (responseData.generated_text) {
               document.getElementById('loading').style.display = 'none';
-              const generatedText = responseData[0].generated_text.substring(responseData[0].generated_text.indexOf('... '));
+              const generatedText = responseData.generated_text.substring(responseData.generated_text.indexOf('... '));
               previousFacts.push(generatedText);
               localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
               typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
@@ -503,27 +511,28 @@ async function generateFact(apiUrl, prompt, token) {
               throw new Error('Unexpected response format');
             }
           } catch (error) {
-            showNotification('Error ⚠️', error.message);
+            showNotification('Error ⚠️', 'Failed to parse response from fact generation');
             document.getElementById('regenerate-btn').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
           }
-        };
+        }, false);
 
         document.getElementById('loading').innerHTML = "Generating Fact  ";
       } catch (error) {
-        showNotification('Error ⚠️', error.message);
+        showNotification('Error ⚠️', error);
         document.getElementById('regenerate-btn').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
       }
     }
-
     async function generateImage(fact, token) {
       try {
+        // Create a hidden form to submit the generate image request
         const imageForm = document.createElement('form');
         imageForm.action = 'https://antibot.dev/generate-image';
         imageForm.method = 'POST';
         imageForm.target = 'image_iframe';
 
+        // Create hidden input fields for fact and token
         const factInput = document.createElement('input');
         factInput.type = 'hidden';
         factInput.name = 'fact';
@@ -536,37 +545,48 @@ async function generateFact(apiUrl, prompt, token) {
         tokenInput.value = token;
         imageForm.appendChild(tokenInput);
 
+        // Create a hidden iframe to submit the image form
         const imageIframe = document.createElement('iframe');
         imageIframe.name = 'image_iframe';
         imageIframe.style.display = 'none';
         document.body.appendChild(imageIframe);
 
+        // Submit the image form
+        document.body.appendChild(imageForm);
         imageForm.submit();
 
-        imageIframe.onload = function() {
-          try {
-            const responseData = JSON.parse(imageIframe.contentWindow.document.body.innerText);
-            if (responseData.photoURL.includes('https://pixabay.com')) {
-              document.getElementById('image').innerHTML = '<img src="' + responseData.photoURL + '" alt="Insect Image">';
-              document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + responseData.inferencedData;
-              document.getElementById('image-credit').innerHTML = '<a href="' + responseData.photoCredit + '">' + responseData.photoCredit + '</a>';
-            } else {
-              showNotification('Error ⚠️', responseData.error);
+        // Listen for messages from the image iframe
+        window.addEventListener('message', handleImageMessageFromIframe, false);
+
+        // Function to handle messages received from the image iframe
+        function handleImageMessageFromIframe(event) {
+          if (event.origin === 'https://antibot.dev') {
+            if (event.data.type === 'image') {
+              if (event.data.photoURL.includes('https://pixabay.com')) {
+                document.getElementById('image').innerHTML = '<img src="' + event.data.photoURL + '" alt="Insect Image">';
+                document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + event.data.inferencedData;
+                document.getElementById('image-credit').innerHTML = '<a href="' + event.data.photoCredit + '">' + event.data.photoCredit + '</a>';
+              } else {
+                showNotification('Error ⚠️', event.data.error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+              }
+            } else if (event.data.type === 'error') {
+              showNotification('Error ⚠️', event.data.error);
               document.getElementById('regenerate-btn').style.display = 'block';
               document.getElementById('loading').style.display = 'none';
+            } else {
+              console.warn('Unexpected message from image iframe:', event.data);
             }
-          } catch (error) {
-            showNotification('Error ⚠️', error.message);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
           }
-        };
+        }
       } catch (error) {
-        showNotification('Error ⚠️', error.message);
+        showNotification('Error ⚠️', error);
         document.getElementById('regenerate-btn').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
       }
     }
+
 function typeText(text) {
             let index = 0;
             const speed = 20;
