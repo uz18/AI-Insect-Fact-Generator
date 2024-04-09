@@ -410,7 +410,7 @@
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
             // Ensure that the message is from the expected origin
-            if (event.origin === 'https://antibot.dev') {
+            if (event.origin === 'https://antibot.dev' && event.source === iframe.contentWindow) {
                 // Handle the message received from the iframe
                 if (event.isTrusted) {
                     handleChallengeResponse(event.data);
