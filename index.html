@@ -468,32 +468,43 @@
         document.getElementById('loading').style.display = 'none';
     }
 }
-
 async function generateFact(apiUrl, prompt, token) {
       try {
-        // Create a hidden iframe to submit the generate fact request
+        // Create a hidden form to submit the generate fact request
+        const factForm = document.createElement('form');
+        factForm.action = apiUrl;
+        factForm.method = 'POST';
+        factForm.target = 'fact_iframe';
+
+        // Create hidden input fields for prompt and token
+        const promptInput = document.createElement('input');
+        promptInput.type = 'hidden';
+        promptInput.name = 'prompt';
+        promptInput.value = prompt;
+        factForm.appendChild(promptInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token';
+        tokenInput.value = token;
+        factForm.appendChild(tokenInput);
+
+        // Create a hidden iframe to submit the fact form
         const factIframe = document.createElement('iframe');
         factIframe.name = 'fact_iframe';
         factIframe.style.display = 'none';
-        factIframe.src = apiUrl; // Set the src attribute to the generate fact URL
         document.body.appendChild(factIframe);
 
-        // Listen for the load event from the fact iframe
-        factIframe.addEventListener('load', () => {
-          // Once the fact iframe is loaded, send a message to request the fact
-          factIframe.contentWindow.postMessage({
-            type: 'generateFact',
-            prompt: prompt,
-            token: token
-          }, apiUrl);
-        }, false);
+        // Submit the fact form
+        document.body.appendChild(factForm);
+        factForm.submit();
 
         // Listen for messages from the fact iframe
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
         function handleFactMessageFromIframe(event) {
-          if (event.origin === apiUrl) {
+          if (event.origin === window.location.origin) {
             if (event.data.type === 'fact') {
               document.getElementById('loading').style.display = 'none';
               const generatedText = event.data.fact.substring(event.data.fact.indexOf('... '));
@@ -519,22 +530,34 @@ async function generateFact(apiUrl, prompt, token) {
 
     async function generateImage(fact, token) {
       try {
-        // Create a hidden iframe to submit the generate image request
+        // Create a hidden form to submit the generate image request
+        const imageForm = document.createElement('form');
+        imageForm.action = 'https://antibot.dev/generate-image';
+        imageForm.method = 'POST';
+        imageForm.target = 'image_iframe';
+
+        // Create hidden input fields for fact and token
+        const factInput = document.createElement('input');
+        factInput.type = 'hidden';
+        factInput.name = 'fact';
+        factInput.value = fact;
+        imageForm.appendChild(factInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token';
+        tokenInput.value = token;
+        imageForm.appendChild(tokenInput);
+
+        // Create a hidden iframe to submit the image form
         const imageIframe = document.createElement('iframe');
         imageIframe.name = 'image_iframe';
         imageIframe.style.display = 'none';
-        imageIframe.src = 'https://antibot.dev/generate-image'; // Set the src attribute to the generate image URL
         document.body.appendChild(imageIframe);
 
-        // Listen for the load event from the image iframe
-        imageIframe.addEventListener('load', () => {
-          // Once the image iframe is loaded, send a message to request the image
-          imageIframe.contentWindow.postMessage({
-            type: 'generateImage',
-            fact: fact,
-            token: token
-          }, 'https://antibot.dev');
-        }, false);
+        // Submit the image form
+        document.body.appendChild(imageForm);
+        imageForm.submit();
 
         // Listen for messages from the image iframe
         window.addEventListener('message', handleImageMessageFromIframe, false);
@@ -567,7 +590,8 @@ async function generateFact(apiUrl, prompt, token) {
         document.getElementById('loading').style.display = 'none';
       }
     }
-        function typeText(text) {
+
+function typeText(text) {
             let index = 0;
             const speed = 20;
             const typingEffect = () => {
