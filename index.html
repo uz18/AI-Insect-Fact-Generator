@@ -430,7 +430,7 @@
                 }
             } else if (event.origin === 'https://'+document.domain) {
                 if (event.data.type === 'token') {
-                    console.log("got my token woohoo")
+                    document.getElementById('loading').innerHTML = "JavaScript challenge Solved!  ";
                     generateFact(apiUrl,prompt,event.data.token)
                 }else if (event.data.type === 'error'){
                     showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
@@ -501,9 +501,11 @@ async function generateFact(apiUrl, prompt, token) {
 
         // Listen for messages from the fact iframe
         window.addEventListener('message', handleFactMessageFromIframe, false);
+        document.getElementById('loading').innerHTML = "Generating Fact  ";
 
         // Function to handle messages received from the fact iframe
         function handleFactMessageFromIframe(event) {
+            console.log(event)
           if (event.origin === window.location.origin) {
             if (event.data.type === 'fact') {
               document.getElementById('loading').style.display = 'none';
