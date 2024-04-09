@@ -465,50 +465,34 @@
 }
 async function generateFact(apiUrl, prompt, token) {
       try {
-        const factForm = document.createElement('form');
-        factForm.action = apiUrl;
-        factForm.method = 'POST';
-        factForm.target = 'fact_iframe';
-
-        const promptInput = document.createElement('input');
-        promptInput.type = 'hidden';
-        promptInput.name = 'prompt';
-        promptInput.value = prompt;
-        factForm.appendChild(promptInput);
-
-        const tokenInput = document.createElement('input');
-        tokenInput.type = 'hidden';
-        tokenInput.name = 'token';
-        tokenInput.value = token;
-        factForm.appendChild(tokenInput);
-
         const factIframe = document.createElement('iframe');
         factIframe.name = 'fact_iframe';
         factIframe.style.display = 'none';
         document.body.appendChild(factIframe);
 
-        document.body.appendChild(factForm); // Append the form to the document body
-        factForm.submit();
-
-        factIframe.onload = function() {
-          try {
-            const responseData = JSON.parse(factIframe.contentWindow.document.body.innerText);
-            if (responseData[0] && responseData[0].generated_text) {
+        window.addEventListener('message', function(event) {
+          if (event.origin === apiUrl) {
+            try {
+              const responseData = event.data;
+              if (responseData[0] && responseData[0].generated_text) {
+                document.getElementById('loading').style.display = 'none';
+                const generatedText = responseData[0].generated_text.substring(responseData[0].generated_text.indexOf('... '));
+                previousFacts.push(generatedText);
+                localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
+                generateImage(generatedText, token);
+              } else {
+                throw new Error('Unexpected response format');
+              }
+            } catch (error) {
+              showNotification('Error ⚠️', error.message);
+              document.getElementById('regenerate-btn').style.display = 'block';
               document.getElementById('loading').style.display = 'none';
-              const generatedText = responseData[0].generated_text.substring(responseData[0].generated_text.indexOf('... '));
-              previousFacts.push(generatedText);
-              localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-              typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-              generateImage(generatedText, token);
-            } else {
-              throw new Error('Unexpected response format');
             }
-          } catch (error) {
-            showNotification('Error ⚠️', error.message);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
           }
-        };
+        });
+
+        factIframe.src = apiUrl + '?prompt=' + encodeURIComponent(prompt) + '&token=' + encodeURIComponent(token);
 
         document.getElementById('loading').innerHTML = "Generating Fact  ";
       } catch (error) {
@@ -520,56 +504,39 @@ async function generateFact(apiUrl, prompt, token) {
 
     async function generateImage(fact, token) {
       try {
-        const imageForm = document.createElement('form');
-        imageForm.action = 'https://antibot.dev/generate-image';
-        imageForm.method = 'POST';
-        imageForm.target = 'image_iframe';
-
-        const factInput = document.createElement('input');
-        factInput.type = 'hidden';
-        factInput.name = 'fact';
-        factInput.value = fact;
-        imageForm.appendChild(factInput);
-
-        const tokenInput = document.createElement('input');
-        tokenInput.type = 'hidden';
-        tokenInput.name = 'token';
-        tokenInput.value = token;
-        imageForm.appendChild(tokenInput);
-
         const imageIframe = document.createElement('iframe');
         imageIframe.name = 'image_iframe';
         imageIframe.style.display = 'none';
         document.body.appendChild(imageIframe);
 
-        document.body.appendChild(imageForm); // Append the form to the document body
-        imageForm.submit();
-
-        imageIframe.onload = function() {
-          try {
-            const responseData = JSON.parse(imageIframe.contentWindow.document.body.innerText);
-            if (responseData.photoURL.includes('https://pixabay.com')) {
-              document.getElementById('image').innerHTML = '<img src="' + responseData.photoURL + '" alt="Insect Image">';
-              document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + responseData.inferencedData;
-              document.getElementById('image-credit').innerHTML = '<a href="' + responseData.photoCredit + '">' + responseData.photoCredit + '</a>';
-            } else {
-              showNotification('Error ⚠️', responseData.error);
+        window.addEventListener('message', function(event) {
+          if (event.origin === 'https://antibot.dev') {
+            try {
+              const responseData = event.data;
+              if (responseData.photoURL.includes('https://pixabay.com')) {
+                document.getElementById('image').innerHTML = '<img src="' + responseData.photoURL + '" alt="Insect Image">';
+                document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + responseData.inferencedData;
+                document.getElementById('image-credit').innerHTML = '<a href="' + responseData.photoCredit + '">' + responseData.photoCredit + '</a>';
+              } else {
+                showNotification('Error ⚠️', responseData.error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+              }
+            } catch (error) {
+              showNotification('Error ⚠️', error.message);
               document.getElementById('regenerate-btn').style.display = 'block';
               document.getElementById('loading').style.display = 'none';
             }
-          } catch (error) {
-            showNotification('Error ⚠️', error.message);
-            document.getElementById('regenerate-btn').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
           }
-        };
+        });
+
+        imageIframe.src = 'https://antibot.dev/generate-image?fact=' + encodeURIComponent(fact) + '&token=' + encodeURIComponent(token);
       } catch (error) {
         showNotification('Error ⚠️', error.message);
         document.getElementById('regenerate-btn').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
       }
     }
-    
 function typeText(text) {
             let index = 0;
             const speed = 20;
