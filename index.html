@@ -408,10 +408,11 @@
         document.body.appendChild(iframe);
 
         // Listen for the message event from the iframe
-        iframe.addEventListener('load', function(event) {
-            console.log("listened")
+        iframe.addEventListener('load', () => {
+            const iframeDocument = iframe.contentWindow.document;
+            console.log(iframeDocument)
             console.log(event)
-            if (event.origin === 'https://antibot.dev') {
+            if (event.isTrusted) {
                 handleChallengeResponse(event.data);
             }
         }, false);
