@@ -494,37 +494,36 @@ async function generateFact(apiUrl, prompt, token) {
         document.body.appendChild(factForm);
         factForm.submit();
 
-        // Listen for messages from the fact iframe
-        window.addEventListener('message', handleFactMessageFromIframe, false);
-        document.getElementById('loading').innerHTML = "Generating Fact  ";
-
-        // Function to handle messages received from the fact iframe
-        function handleFactMessageFromIframe(event) {
-            console.log(event)
-          if (event.origin === window.location.origin) {
-            if (event.data.type === 'fact') {
+        // Listen for the load event from the fact iframe
+        factIframe.addEventListener('load', () => {
+          // Extract the JSON response from the iframe's document
+          const responseText = factIframe.contentDocument.body.innerText;
+          try {
+            const responseData = JSON.parse(responseText);
+            if (responseData.generated_text) {
               document.getElementById('loading').style.display = 'none';
-              const generatedText = event.data.fact.substring(event.data.fact.indexOf('... '));
+              const generatedText = responseData.generated_text.substring(responseData.generated_text.indexOf('... '));
               previousFacts.push(generatedText);
               localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
               typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
               generateImage(generatedText, token);
-            } else if (event.data.type === 'error') {
-              showNotification('Error ⚠️', event.data.error);
-              document.getElementById('regenerate-btn').style.display = 'block';
-              document.getElementById('loading').style.display = 'none';
             } else {
-              console.warn('Unexpected message from fact iframe:', event.data);
+              throw new Error('Unexpected response format');
             }
+          } catch (error) {
+            showNotification('Error ⚠️', 'Failed to parse response from fact generation');
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
           }
-        }
+        }, false);
+
+        document.getElementById('loading').innerHTML = "Generating Fact  ";
       } catch (error) {
         showNotification('Error ⚠️', error);
         document.getElementById('regenerate-btn').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
       }
     }
-
     async function generateImage(fact, token) {
       try {
         // Create a hidden form to submit the generate image request
