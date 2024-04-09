@@ -457,33 +457,7 @@
         // Wait for the token to be available (handled via message event)
         document.getElementById('loading').innerHTML = "Generating insect fact  ";
         
-        axios.post(apiUrl, {
-                        prompt: prompt,
-                        token: event.data.token // Include the token in the request body
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        signal: controller.signal
-                    })
-                    .then(response => {
-                        clearTimeout(timeoutId);
-                        document.getElementById('loading').style.display = 'none';
-                        const generatedText = response.data[0].generated_text.substring(response.data[0]
-                            .generated_text
-                            .indexOf('... '));
-                        previousFacts.push(generatedText);
-                        // Store previous facts in localStorage
-                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                        typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                        generateImage(generatedText, event.data.token); // Pass the token to generateImage
-                    })
-                    .catch(error => {
-                        clearTimeout(timeoutId);
-                        showNotification('Error ⚠️', error);
-                        document.getElementById('regenerate-btn').style.display = 'block';
-                        document.getElementById('loading').style.display = 'none';
-                    });
+        
 
     } catch (error) {
         showNotification('Error ⚠️', error);
