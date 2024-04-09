@@ -410,8 +410,7 @@
         // Listen for the load event from the iframe
         iframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
-            console.log("loaded");
-            iframe.contentWindow.postMessage({ type: 'getToken' }, 'https://antibot.dev');
+            iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
         }, false);
 
         // Listen for messages from the iframe
@@ -425,7 +424,10 @@
                 // Check the message type
                 if (event.data.type === 'challenge') {
                     handleChallengeResponse(event.data.challenge);
-                }else {
+                }else if (event.data.type === 'token') {
+                    console.log("got my token woohoo")
+                    console.log(event.data.token)
+                }else{
                     console.warn('Unexpected message from iframe:', event.data);
                 }
             } else {
@@ -450,12 +452,7 @@
     }
   })();
         }
-        function executeSubmitCode(data) {
-        document.getElementById('loading').innerHTML = "Generating insect fact  ";
-      const script = document.createElement('script');
-      script.textContent = data;
-      document.body.appendChild(script);
-    }    
+        
         // Function to execute the code received from /submit    
 
     } catch (error) {
