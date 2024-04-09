@@ -510,8 +510,9 @@ async function generateFact(apiUrl, prompt, token) {
                 try{
                 if (event.data.type === 'fact') {
                 document.getElementById('loading').style.display = 'none';
-                console.log(event.data.response)
-                const generatedText = event.data.response.substring(responseData.generated_text.indexOf('... '));
+                let response = (JSON.parse(event.data.response))[0].generated_text
+                console.log(response)
+                const generatedText = response.substring(responseData.generated_text.indexOf('... '));
                 previousFacts.push(generatedText);
                 localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                 typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
