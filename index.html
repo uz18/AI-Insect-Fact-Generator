@@ -494,6 +494,9 @@ async function generateFact(apiUrl, prompt, token) {
         document.body.appendChild(factForm);
         factForm.submit();
 
+        factIframe.addEventListener('load', function () {
+            console.log("GOT RESPONSE BOIIIII")
+        });
         // Listen for messages from the fact iframe
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
