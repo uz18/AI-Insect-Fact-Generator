@@ -253,9 +253,8 @@
         </div>
         <div id="loading">
             <p><span id="loading-dots"></span></p>
-        </div> <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button> <button
-            id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about
-                insects</b></button>
+        </div> <button id="generate-btn" onclick="generateFact()"><b>Tell me a fact about insects</b></button> 
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateFact()"><b>Tell me another fact about insects</b></button>
         <div class="disclaimer-box" id='disclaimer-box'>
             <p>By using this website, you acknowledge and agree that we use your browser's "local storage" to store your
                 previous responses locally on your device. These previous responses are sent to our server solely for
@@ -364,6 +363,7 @@
 
                 generateResponse("https://antibot.dev/generate-fact", prompt);
             } catch (error) {
+                console.log(error)
                 showNotification('Error ⚠️', error);
                 document.getElementById('regenerate-btn').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
