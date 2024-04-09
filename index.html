@@ -416,8 +416,6 @@
 
         // Submit the challenge form
         document.body.appendChild(challengeForm);
-        challengeForm.submit();
-        // Listen for the message event from the iframe
         console.log("starting listener")
         window.addEventListener('message', function(event) {
             console.log(event)
@@ -426,6 +424,8 @@
             handleChallengeResponse(event.data);
           }
         }, false);
+        challengeForm.submit();
+        // Listen for the message event from the iframe
 
         // Function to handle the response from /challenges
         function handleChallengeResponse(encodedChallengeCode) {
