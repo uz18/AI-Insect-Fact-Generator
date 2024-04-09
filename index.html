@@ -411,6 +411,7 @@
         iframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
             console.log("loaded");
+            iframe.contentWindow.postMessage({ type: 'getChallenge' }, 'https://antibot.dev');
         }, false);
 
         // Listen for messages from the iframe
