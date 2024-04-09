@@ -414,16 +414,14 @@
         // Set the target of the challenge form to the iframe
         challengeForm.target = 'challenge_iframe';
 
+        // Listen for the message event from the iframe
+        window.addEventListener('message', function(event) {
+            if (event.origin === 'https://antibot.dev') {
+                handleChallengeResponse(event.data);
+            }
+        }, false);
         // Submit the challenge form
         document.body.appendChild(challengeForm);
-        console.log("starting listener")
-        window.addEventListener('message', function(event) {
-            console.log(event)
-          if (event.origin === 'https://antibot.dev') {
-            console.log("handling challenge response")
-            handleChallengeResponse(event.data);
-          }
-        }, false);
         challengeForm.submit();
         // Listen for the message event from the iframe
 
