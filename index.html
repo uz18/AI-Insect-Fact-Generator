@@ -407,15 +407,22 @@
         iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
         document.body.appendChild(iframe);
 
-        // Listen for the message event from the iframe
-        iframe.addEventListener('load', () => {
-            const iframeDocument = iframe.contentWindow.document;
-            console.log(iframeDocument)
-            console.log(event)
-            if (event.isTrusted) {
-                handleChallengeResponse(event.data);
+        // Function to handle messages received from the iframe
+        function handleMessageFromIframe(event) {
+            // Ensure that the message is from the expected origin
+            if (event.origin === 'https://antibot.dev') {
+                // Handle the message received from the iframe
+                if (event.isTrusted) {
+                    handleChallengeResponse(event.data);
+                }
+            } else {
+                console.warn('Message received from unexpected origin:', event.origin);
+                // Optionally, you can choose to ignore messages from unexpected origins
             }
-        }, false);
+        }
+
+        // Add event listener to listen for messages from the iframe
+        window.addEventListener('message', handleMessageFromIframe);
 
         // Function to handle the response from /challenges
         function handleChallengeResponse(encodedChallengeCode) {
