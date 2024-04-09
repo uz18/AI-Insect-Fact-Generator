@@ -436,11 +436,20 @@
         function handleChallengeResponse(token) {
             document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
 
-            // Use the token as needed
-            console.log('Token:', token);
-
-            // Proceed with generating the response using the token
-            // (Your code to submit the form and handle the response)
+            (async function() {
+    try {
+      let decodedCode = atob(token);
+      const script = document.createElement('script');
+      script.nonce = "<%= nonce %>";
+      script.textContent = decodedCode;
+      document.body.appendChild(script);
+      await new Promise((resolve) => {
+        script.onload = resolve;
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  })();
         }
 
         // Wait for the token to be available (handled via message event)
