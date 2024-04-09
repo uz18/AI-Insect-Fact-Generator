@@ -415,8 +415,13 @@
         }, false);
 
         // Listen for messages from the iframe
-        window.addEventListener('message', event => {
-  
+        iframe.addEventListener('message', event => {
+            console.log('iframe')
+  console.log(event)
+});
+ // Listen for messages from the iframe
+ iframe.contentWindow.addEventListener('message', event => {
+            console.log('contentwindow')
   console.log(event)
 });
 
