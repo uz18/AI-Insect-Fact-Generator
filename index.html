@@ -495,7 +495,6 @@ async function generateFact(apiUrl, prompt, token) {
         factForm.submit();
 
         factIframe.addEventListener('load', function () {
-            console.log("GOT RESPONSE BOIIIII")
             factIframe.contentWindow.postMessage({ type: 'getFact' }, 'https://antibot.dev');
         });
         // Listen for messages from the fact iframe
@@ -511,12 +510,10 @@ async function generateFact(apiUrl, prompt, token) {
                 if (event.data.type === 'fact') {
                 document.getElementById('loading').style.display = 'none';
                 let response = atob(event.data.response)
-                console.log(response)
-                const generatedText = response.substring(responseData.generated_text.indexOf('... '));
-                previousFacts.push(generatedText);
+                previousFacts.push(response);
                 localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                typeText(generatedText.substring(0, generatedText.lastIndexOf('.') + 1));
-                generateImage(generatedText, token);
+                typeText(response.substring(0, response.lastIndexOf('.') + 1));
+                generateImage(response, token);
               } else {
                 throw new Error('Unexpected response format');
               }
