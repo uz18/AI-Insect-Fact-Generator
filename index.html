@@ -407,7 +407,7 @@
         iframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
             iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
-            document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
+            //document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
         }, false);
 
         // Listen for messages from the iframe
@@ -427,7 +427,7 @@
             } else if (event.origin === 'https://'+document.domain) {
                 if (event.data.type === 'token') {
                     document.getElementById('loading').innerHTML = "JavaScript challenge Solved!  ";
-                    document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
+                    //document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
                     generateFact(apiUrl,prompt,event.data.token)
                 }else if (event.data.type === 'error'){
                     showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
@@ -571,7 +571,7 @@ async function generateImage(fact, token) {
         imageIframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
             imageIframe.contentWindow.postMessage({ type: 'getImage' }, 'https://antibot.dev');
-            document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
+           // document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
         }, false);
 
         // Listen for messages from the image iframe
