@@ -411,13 +411,19 @@
             document.getElementById('antibot-container').appendChild(iframe);
         }
 
+        // Flag to track if the challenge response has been handled
+        let challengeResponseHandled = false;
+
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
                 // Check the message type
                 if (event.data.type === 'challenge') {
-                    handleChallengeResponse(event.data.challenge);
+                    if (!challengeResponseHandled) {
+                        handleChallengeResponse(event.data.challenge);
+                        challengeResponseHandled = true;
+                    }
                 } else {
                     console.warn('Unexpected message from iframe:', event.data);
                 }
@@ -433,15 +439,9 @@
                     console.warn('Unexpected message from iframe:', event.data);
                 }
             }
-
-            // Remove the event listener after handling the message
-            window.removeEventListener('message', handleMessageFromIframe);
         }
 
-        // Remove existing message event listener
-        window.removeEventListener('message', handleMessageFromIframe);
-
-        // Add new message event listener
+        // Add message event listener
         window.addEventListener('message', handleMessageFromIframe, false);
 
         // Function to handle the response from /challenges
@@ -468,15 +468,9 @@
         function handleChallengeIframeLoad() {
             // Once the iframe is loaded, send a message to request the token
             iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
-
-            // Remove the load event listener after handling the event
-            iframe.removeEventListener('load', handleChallengeIframeLoad);
         }
 
-        // Remove existing load event listener from the challenge iframe
-        iframe.removeEventListener('load', handleChallengeIframeLoad);
-
-        // Add new load event listener to the challenge iframe
+        // Add load event listener to the challenge iframe
         iframe.addEventListener('load', handleChallengeIframeLoad, false);
 
     } catch (error) {
@@ -486,6 +480,7 @@
         document.getElementById('loading').style.display = 'none';
     }
 }
+
 function cleanup() {
     const oldAntibotContainer = document.getElementById('antibot-container');
     const newAntibotContainer = document.createElement('div');
