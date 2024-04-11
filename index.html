@@ -563,6 +563,10 @@ async function generateFact(apiUrl, prompt, token) {
                     } else if (event.data.type === 'image') {
                         cleanup();
                     } else {
+                        console.log("Ahhhhhh")
+                        console.log(event)
+                        console.log(event.data)
+                        console.log(event.data.type)
                         throw new Error('Unexpected response format');
                     }
                 } catch (error) {
