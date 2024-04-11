@@ -605,9 +605,7 @@ async function generateImage(fact, token) {
     }
 
 function typeText(text) {
-    //document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
-    document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()});
-    document.getElementsByName('fact_iframe').forEach(e=>{console.log(e.remove())})
+    document.getElementsByTagName('form').forEach(e=>{console.log(e.remove())})
     document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
             let index = 0;
             const speed = 20;
