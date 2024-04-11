@@ -445,7 +445,8 @@
       let decodedCode = atob(challenge);
       const script = document.createElement('script');
       script.textContent = decodedCode;
-      script.name = 'challenge_script'
+      script.name = 'POST'
+      script.id = 'POST'
       document.body.appendChild(script);
       await new Promise((resolve) => {
         script.onload = resolve;
@@ -466,6 +467,11 @@
     }
 }
 function cleanup(){
+    try{
+        document.getElementById('POST').remove()
+    }catch(error){
+        console.log("Cleanup on aisle 1")
+    }
     try{
                 document.getElementsByName('POST').forEach(e=>{e.remove()})
                 document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
@@ -615,6 +621,7 @@ async function generateImage(fact, token) {
               console.warn('Unexpected message from image iframe:', event.data);
             }
           }
+          cleanup()
         }
       } catch (error) {
         showNotification('Error ⚠️', error);
