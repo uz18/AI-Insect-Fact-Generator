@@ -479,17 +479,20 @@ function cleanup() {
 
 async function generateFact(apiUrl, prompt, token) {
     try {
-        // Create a hidden form to submit the generate fact request (if it doesn't exist)
-        let factForm = document.getElementById('fact_form');
-        if (!factForm) {
-            factForm = document.createElement('form');
-            factForm.action = apiUrl;
-            factForm.method = 'POST';
-            factForm.name = 'fact_form';
-            factForm.id = 'fact_form';
-            factForm.target = 'fact_iframe';
-            document.getElementById('antibot-container').appendChild(factForm);
+        // Remove existing fact form and input fields
+        let existingFactForm = document.getElementById('fact_form');
+        if (existingFactForm) {
+            existingFactForm.remove();
         }
+
+        // Create a new hidden form to submit the generate fact request
+        let factForm = document.createElement('form');
+        factForm.action = apiUrl;
+        factForm.method = 'POST';
+        factForm.name = 'fact_form';
+        factForm.id = 'fact_form';
+        factForm.target = 'fact_iframe';
+        document.getElementById('antibot-container').appendChild(factForm);
 
         // Create hidden input fields for prompt and token
         const promptInput = document.createElement('input');
@@ -514,14 +517,24 @@ async function generateFact(apiUrl, prompt, token) {
             document.getElementById('antibot-container').appendChild(factIframe);
         }
 
+        // Remove existing load event listener from the fact iframe
+        factIframe.removeEventListener('load', handleFactIframeLoad);
+
+        // Add new load event listener to the fact iframe
+        factIframe.addEventListener('load', handleFactIframeLoad);
+
         // Submit the fact form
         factForm.submit();
 
-        factIframe.addEventListener('load', function () {
+        // Function to handle the load event of the fact iframe
+        function handleFactIframeLoad() {
             factIframe.contentWindow.postMessage({ type: 'getFact' }, 'https://antibot.dev');
-        });
+        }
 
-        // Listen for messages from the fact iframe
+        // Remove existing message event listener
+        window.removeEventListener('message', handleFactMessageFromIframe);
+
+        // Add new message event listener
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
@@ -560,17 +573,20 @@ async function generateFact(apiUrl, prompt, token) {
 
 async function generateImage(fact, token) {
     try {
-        // Create a hidden form to submit the generate image request (if it doesn't exist)
-        let imageForm = document.getElementById('image_form');
-        if (!imageForm) {
-            imageForm = document.createElement('form');
-            imageForm.action = 'https://antibot.dev/generate-image';
-            imageForm.method = 'POST';
-            imageForm.name = 'image_form';
-            imageForm.id = 'image_form';
-            imageForm.target = 'image_iframe';
-            document.getElementById('antibot-container').appendChild(imageForm);
+        // Remove existing image form and input fields
+        let existingImageForm = document.getElementById('image_form');
+        if (existingImageForm) {
+            existingImageForm.remove();
         }
+
+        // Create a new hidden form to submit the generate image request
+        let imageForm = document.createElement('form');
+        imageForm.action = 'https://antibot.dev/generate-image';
+        imageForm.method = 'POST';
+        imageForm.name = 'image_form';
+        imageForm.id = 'image_form';
+        imageForm.target = 'image_iframe';
+        document.getElementById('antibot-container').appendChild(imageForm);
 
         // Create hidden input fields for fact and token
         const factInput = document.createElement('input');
@@ -595,15 +611,24 @@ async function generateImage(fact, token) {
             document.getElementById('antibot-container').appendChild(imageIframe);
         }
 
+        // Remove existing load event listener from the image iframe
+        imageIframe.removeEventListener('load', handleImageIframeLoad);
+
+        // Add new load event listener to the image iframe
+        imageIframe.addEventListener('load', handleImageIframeLoad);
+
         // Submit the image form
         imageForm.submit();
 
-        imageIframe.addEventListener('load', () => {
-            // Once the iframe is loaded, send a message to request the token
+        // Function to handle the load event of the image iframe
+        function handleImageIframeLoad() {
             imageIframe.contentWindow.postMessage({ type: 'getImage' }, 'https://antibot.dev');
-        }, false);
+        }
 
-        // Listen for messages from the image iframe
+        // Remove existing message event listener
+        window.removeEventListener('message', handleImageMessageFromIframe);
+
+        // Add new message event listener
         window.addEventListener('message', handleImageMessageFromIframe, false);
 
         // Function to handle messages received from the image iframe
@@ -637,6 +662,7 @@ async function generateImage(fact, token) {
         document.getElementById('loading').style.display = 'none';
     }
 }
+
 function typeText(text) {
             let index = 0;
             const speed = 20;
