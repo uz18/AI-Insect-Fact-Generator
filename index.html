@@ -465,12 +465,6 @@
     }
 }
 async function generateFact(apiUrl, prompt, token) {
-    try{
-      //  document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()})
-   // document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
-    }catch(error){
-        console.log("Cleanup on aisle 3")
-    }
       try {
         // Create a hidden form to submit the generate fact request
         const factForm = document.createElement('form');
@@ -522,7 +516,22 @@ async function generateFact(apiUrl, prompt, token) {
                 localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                 typeText(response.substring(0, response.lastIndexOf('.') + 1));
                 generateImage(response, token);
-              } else {
+              }else if (event.data.type === 'image'){
+                try{
+                document.getElementsByName('POST').forEach(e=>{e.remove()})
+                document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
+            }catch(error){
+                console.log("Cleanup on aisle 2")
+            }
+            try{
+    document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()})
+   document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
+   document.getElementsByName('fact_iframe').forEach(e=>{e.remove()})
+
+    }catch(error){
+        console.log("Cleanup on aisle 3")
+    }
+              }else {
                 throw new Error('Unexpected response format');
               }
             } catch (error) {
@@ -573,12 +582,6 @@ async function generateImage(fact, token) {
         imageForm.submit();
         imageIframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
-            try{
-                //document.getElementsByName('POST').forEach(e=>{e.remove()})
-                //document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
-            }catch(error){
-                console.log("Cleanup on aisle 2")
-            }
             imageIframe.contentWindow.postMessage({ type: 'getImage' }, 'https://antibot.dev');
         }, false);
 
@@ -617,7 +620,6 @@ async function generateImage(fact, token) {
     }
 
 function typeText(text) {
-   // document.getElementsByName('fact_iframe').forEach(e=>{e.remove()})
             let index = 0;
             const speed = 20;
             const typingEffect = () => {
