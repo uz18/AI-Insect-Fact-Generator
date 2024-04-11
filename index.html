@@ -424,6 +424,10 @@
                         handleChallengeResponse(event.data.challenge);
                         challengeResponseHandled = true;
                     }
+                }else if (event.data.type === 'image') {
+                    
+                }else if (event.data.type === 'fact') {
+                    
                 } else {
                     console.warn('Unexpected message from iframe:', event.data);
                 }
@@ -588,6 +592,7 @@ async function generateFact(apiUrl, prompt, token) {
 }
 
 async function generateImage(fact, token) {
+    cleanup();
     try {
         // Remove existing image form and input fields
         let existingImageForm = document.getElementById('image_form');
