@@ -466,8 +466,8 @@
 }
 async function generateFact(apiUrl, prompt, token) {
     try{
-        document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()})
-    document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
+      //  document.getElementsByName('challenge_iframe').forEach(e=>{e.remove()})
+   // document.getElementsByName('challenge_script').forEach(e=>{e.remove()});
     }catch(error){
         console.log("Cleanup on aisle 3")
     }
@@ -574,8 +574,8 @@ async function generateImage(fact, token) {
         imageIframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
             try{
-                document.getElementsByName('POST').forEach(e=>{e.remove()})
-                document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
+                //document.getElementsByName('POST').forEach(e=>{e.remove()})
+                //document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
             }catch(error){
                 console.log("Cleanup on aisle 2")
             }
@@ -596,12 +596,12 @@ async function generateImage(fact, token) {
                 document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + image.inferencedData;
                 document.getElementById('image-credit').innerHTML = '<a href="' + image.photoCredit + '">' + image.photoCredit + '</a>';
               } else {
-                showNotification('Error ⚠️', event.data.error);
+                showNotification('Error ⚠️', atob(event.data.error));
                 document.getElementById('regenerate-btn').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
               }
             } else if (event.data.type === 'error') {
-              showNotification('Error ⚠️', event.data.error);
+              showNotification('Error ⚠️', atob(event.data.error));
               document.getElementById('regenerate-btn').style.display = 'block';
               document.getElementById('loading').style.display = 'none';
             } else {
@@ -617,7 +617,7 @@ async function generateImage(fact, token) {
     }
 
 function typeText(text) {
-    document.getElementsByName('fact_iframe').forEach(e=>{e.remove()})
+   // document.getElementsByName('fact_iframe').forEach(e=>{e.remove()})
             let index = 0;
             const speed = 20;
             const typingEffect = () => {
