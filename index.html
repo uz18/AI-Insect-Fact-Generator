@@ -555,10 +555,6 @@ async function generateFact(apiUrl, prompt, token) {
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
-// Flag to track if the fact has been typed
-let factTyped = false;
-
-// Function to handle messages received from the fact iframe
 function handleFactMessageFromIframe(event) {
     if (event.origin === 'https://antibot.dev') {
         // Check the message type
@@ -569,8 +565,8 @@ function handleFactMessageFromIframe(event) {
                 previousFacts.push(response);
                 localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
                 if (!factTyped) {
-                    typeText(response.substring(0, response.lastIndexOf('.') + 1));
                     factTyped = true;
+                    typeText(response.substring(0, response.lastIndexOf('.') + 1));
                 }
                 generateImage(response, token);
 
