@@ -368,51 +368,41 @@
         }
 
         function regenerateaFact() {
-            cleanup()
-            try {
-                let prompt =
-                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+    cleanup();
+    try {
+        let prompt =
+            `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
 
-                // Append previously generated facts to the prompt
-                for (let i = 0; i < previousFacts.length; i++) {
-                    prompt += ` ${previousFacts[i]}</s>`;
-                }
-
-                // Append the original prompt without the <s> tag
-                prompt +=
-                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
-
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('fact').innerHTML = '';
-                document.getElementById('image').innerHTML = '';
-                document.getElementById('image-text').innerHTML = '';
-                document.getElementById('image-credit').innerHTML = '';
-                document.getElementById('regenerate-btn').style.display = 'none';
-
-                generateResponse("https://antibot.dev/generate-fact", prompt);
-            } catch (error) {
-                showNotification('Error ⚠️', error);
-                document.getElementById('regenerate-btn').style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
-            }
+        // Append previously generated facts to the prompt
+        for (let i = 0; i < previousFacts.length; i++) {
+            prompt += ` ${previousFacts[i]}</s>`;
         }
-        async function generateResponse(apiUrl, prompt) {
+
+        // Append the original prompt without the <s> tag
+        prompt +=
+            ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('fact').innerHTML = '';
+        document.getElementById('image').innerHTML = '';
+        document.getElementById('image-text').innerHTML = '';
+        document.getElementById('image-credit').innerHTML = '';
+        document.getElementById('regenerate-btn').style.display = 'none';
+
+        generateResponse("https://antibot.dev/generate-fact", prompt);
+    } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+async function generateResponse(apiUrl, prompt) {
     try {
         document.getElementById('loading').innerHTML = "Connecting to the server  ";
 
         // Create a hidden iframe to submit the challenge form (if it doesn't exist)
         let iframe = document.getElementById('challenge_iframe');
-        try{
-             // Remove existing load event listener from the fact iframe
-             iframe.removeEventListener('load', handleFactIframeLoad);
-        }catch(error){
-            console.log(error)
-        }
-        try{
-            window.removeEventListener('message', handleMessageFromIframe);
-        }catch(error){
-            console.log(error)
-        }
         if (!iframe) {
             iframe = document.createElement('iframe');
             iframe.name = 'challenge_iframe';
@@ -421,15 +411,6 @@
             iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
             document.getElementById('antibot-container').appendChild(iframe);
         }
-
-        // Listen for the load event from the iframe
-        iframe.addEventListener('load', () => {
-            // Once the iframe is loaded, send a message to request the token
-            iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
-        }, false);
-
-        // Listen for messages from the iframe
-        window.addEventListener('message', handleMessageFromIframe, false);
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
@@ -453,7 +434,13 @@
                     console.warn('Unexpected message from iframe:', event.data);
                 }
             }
+
+            // Remove the event listener after handling the message
+            window.removeEventListener('message', handleMessageFromIframe);
         }
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', handleMessageFromIframe, false);
 
         // Function to handle the response from /challenges
         function handleChallengeResponse(challenge) {
@@ -475,6 +462,18 @@
             })();
         }
 
+        // Function to handle the load event of the challenge iframe
+        function handleChallengeIframeLoad() {
+            // Once the iframe is loaded, send a message to request the token
+            iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
+
+            // Remove the load event listener after handling the event
+            iframe.removeEventListener('load', handleChallengeIframeLoad);
+        }
+
+        // Listen for the load event from the iframe
+        iframe.addEventListener('load', handleChallengeIframeLoad, false);
+
     } catch (error) {
         cleanup();
         showNotification('Error ⚠️', error);
@@ -482,7 +481,6 @@
         document.getElementById('loading').style.display = 'none';
     }
 }
-
 function cleanup() {
     const antibotContainer = document.getElementById('antibot-container');
     antibotContainer.innerHTML = '';
