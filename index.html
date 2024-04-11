@@ -573,6 +573,12 @@ async function generateImage(fact, token) {
         imageForm.submit();
         imageIframe.addEventListener('load', () => {
             // Once the iframe is loaded, send a message to request the token
+            try{
+                document.getElementsByName('POST').forEach(e=>{e.remove()})
+                document.getElementsByName('image_iframe').forEach(e=>{e.remove()})
+            }catch(error){
+                console.log("Cleanup on aisle 2")
+            }
             imageIframe.contentWindow.postMessage({ type: 'getImage' }, 'https://antibot.dev');
         }, false);
 
@@ -611,7 +617,6 @@ async function generateImage(fact, token) {
     }
 
 function typeText(text) {
-    document.getElementsByName('POST').forEach(e=>{e.remove()})
     document.getElementsByName('fact_iframe').forEach(e=>{e.remove()})
             let index = 0;
             const speed = 20;
