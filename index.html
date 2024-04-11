@@ -341,6 +341,7 @@
         }
 
         function generateaFact() {
+            factTyped = false;
             cleanup()
             try {
                 let prompt =
@@ -368,6 +369,7 @@
         }
 
         function regenerateaFact() {
+            factTyped = false;
             cleanup()
             try {
                 let prompt =
@@ -553,6 +555,10 @@ async function generateFact(apiUrl, prompt, token) {
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
+// Flag to track if the fact has been typed
+let factTyped = false;
+
+// Function to handle messages received from the fact iframe
 function handleFactMessageFromIframe(event) {
     if (event.origin === 'https://antibot.dev') {
         // Check the message type
@@ -560,17 +566,18 @@ function handleFactMessageFromIframe(event) {
             if (event.data.type === 'fact') {
                 document.getElementById('loading').style.display = 'none';
                 let response = atob(event.data.response);
-                if (!previousFacts.includes(response)) {
-                    previousFacts.push(response);
-                    localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                previousFacts.push(response);
+                localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                if (!factTyped) {
                     typeText(response.substring(0, response.lastIndexOf('.') + 1));
+                    factTyped = true;
                 }
                 generateImage(response, token);
             } else if (event.data.type === 'image') {
                 cleanup();
             } else if (event.data.type === 'challenge') {
                 cleanup();
-            } else {
+            }else {
                 console.log("Ahhhhhh")
                 console.log(event)
                 console.log(event.data)
@@ -586,6 +593,7 @@ function handleFactMessageFromIframe(event) {
         }
     }
 }
+
         document.getElementById('loading').innerHTML = "Generating Fact  ";
     } catch (error) {
         showNotification('Error ⚠️', error);
