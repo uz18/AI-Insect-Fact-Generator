@@ -408,6 +408,11 @@
         }catch(error){
             console.log(error)
         }
+        try{
+            window.removeEventListener('message', handleMessageFromIframe);
+        }catch(error){
+            console.log(error)
+        }
         if (!iframe) {
             iframe = document.createElement('iframe');
             iframe.name = 'challenge_iframe';
