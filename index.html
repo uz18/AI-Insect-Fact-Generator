@@ -573,11 +573,14 @@ function handleFactMessageFromIframe(event) {
                     factTyped = true;
                 }
                 generateImage(response, token);
+
+                // Remove the message event listener after processing the fact message
+                window.removeEventListener('message', handleFactMessageFromIframe);
             } else if (event.data.type === 'image') {
                 cleanup();
             } else if (event.data.type === 'challenge') {
                 cleanup();
-            }else {
+            } else {
                 console.log("Ahhhhhh")
                 console.log(event)
                 console.log(event.data)
@@ -593,7 +596,6 @@ function handleFactMessageFromIframe(event) {
         }
     }
 }
-
         document.getElementById('loading').innerHTML = "Generating Fact  ";
     } catch (error) {
         showNotification('Error ⚠️', error);
