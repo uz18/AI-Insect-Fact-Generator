@@ -567,6 +567,7 @@ async function generateFact(apiUrl, prompt, token) {
                     }
                 } catch (error) {
                     cleanup();
+                    console.log(error)
                     showNotification('Error ⚠️', 'Failed to parse response from fact generation');
                     document.getElementById('regenerate-btn').style.display = 'block';
                     document.getElementById('loading').style.display = 'none';
