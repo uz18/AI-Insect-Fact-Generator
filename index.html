@@ -400,15 +400,14 @@
     try {
         document.getElementById('loading').innerHTML = "Connecting to the server  ";
 
+        // Create a hidden iframe to submit the challenge form (if it doesn't exist)
+        let iframe = document.getElementById('challenge_iframe');
         try{
              // Remove existing load event listener from the fact iframe
              iframe.removeEventListener('load', handleFactIframeLoad);
         }catch(error){
-            
+            console.log(error)
         }
-
-        // Create a hidden iframe to submit the challenge form (if it doesn't exist)
-        let iframe = document.getElementById('challenge_iframe');
         if (!iframe) {
             iframe = document.createElement('iframe');
             iframe.name = 'challenge_iframe';
