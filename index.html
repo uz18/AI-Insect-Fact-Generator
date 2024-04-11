@@ -553,36 +553,39 @@ async function generateFact(apiUrl, prompt, token) {
         window.addEventListener('message', handleFactMessageFromIframe, false);
 
         // Function to handle messages received from the fact iframe
-        function handleFactMessageFromIframe(event) {
-            if (event.origin === 'https://antibot.dev') {
-                // Check the message type
-                try {
-                    if (event.data.type === 'fact') {
-                        document.getElementById('loading').style.display = 'none';
-                        let response = atob(event.data.response);
-                        previousFacts.push(response);
-                        localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
-                        typeText(response.substring(0, response.lastIndexOf('.') + 1));
-                        generateImage(response, token);
-                    } else if (event.data.type === 'image') {
-                        cleanup();
-                    } else {
-                        console.log("Ahhhhhh")
-                        console.log(event)
-                        console.log(event.data)
-                        console.log(event.data.type)
-                        throw new Error('Unexpected response format');
-                    }
-                } catch (error) {
-                    cleanup();
-                    console.log(error)
-                    showNotification('Error ⚠️', 'Failed to parse response from fact generation');
-                    document.getElementById('regenerate-btn').style.display = 'block';
-                    document.getElementById('loading').style.display = 'none';
+function handleFactMessageFromIframe(event) {
+    if (event.origin === 'https://antibot.dev') {
+        // Check the message type
+        try {
+            if (event.data.type === 'fact') {
+                document.getElementById('loading').style.display = 'none';
+                let response = atob(event.data.response);
+                if (!previousFacts.includes(response)) {
+                    previousFacts.push(response);
+                    localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                    typeText(response.substring(0, response.lastIndexOf('.') + 1));
                 }
+                generateImage(response, token);
+            } else if (event.data.type === 'image') {
+                cleanup();
+            } else if (event.data.type === 'challenge') {
+                cleanup();
+            } else {
+                console.log("Ahhhhhh")
+                console.log(event)
+                console.log(event.data)
+                console.log(event.data.type)
+                throw new Error('Unexpected response format');
             }
+        } catch (error) {
+            cleanup();
+            console.log(error)
+            showNotification('Error ⚠️', 'Failed to parse response from fact generation');
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         }
-
+    }
+}
         document.getElementById('loading').innerHTML = "Generating Fact  ";
     } catch (error) {
         showNotification('Error ⚠️', error);
