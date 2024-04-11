@@ -446,7 +446,11 @@
                 // Check the message type
                 if (event.data.type === 'challenge') {
                     handleChallengeResponse(event.data.challenge);
-                } else {
+                }else if(event.data.type === 'fact'){
+
+                }else if(event.data.type === 'image'){
+
+                }else {
                     console.warn('Unexpected message from iframe:', event.data);
                 }
             } else if (event.origin === 'https://' + document.domain) {
@@ -492,8 +496,10 @@
 }
 
 function cleanup() {
-    const antibotContainer = document.getElementById('antibot-container');
-    antibotContainer.innerHTML = '';
+    const oldAntibotContainer = document.getElementById('antibot-container');
+    const newAntibotContainer = document.createElement('div');
+    newAntibotContainer.id = 'antibot-container';
+    oldAntibotContainer.parentNode.replaceChild(newAntibotContainer, oldAntibotContainer);
 }
 
 async function generateFact(apiUrl, prompt, token) {
