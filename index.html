@@ -542,6 +542,7 @@ async function generateFact(apiUrl, prompt, token) {
                 throw new Error('Unexpected response format');
               }
             } catch (error) {
+              cleanup()
               showNotification('Error ⚠️', 'Failed to parse response from fact generation');
               document.getElementById('regenerate-btn').style.display = 'block';
               document.getElementById('loading').style.display = 'none';
