@@ -443,23 +443,21 @@ async function generateResponse(apiUrl, prompt) {
         window.addEventListener('message', handleMessageFromIframe, false);
 
         // Function to handle the response from /challenges
-        function handleChallengeResponse(challenge) {
+        async function handleChallengeResponse(challenge) {
             document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
-            (async function () {
-                try {
-                    let decodedCode = atob(challenge);
-                    const script = document.createElement('script');
-                    script.textContent = decodedCode;
-                    script.name = 'POST';
-                    script.id = 'POST';
-                    document.getElementById('antibot-container').appendChild(script);
-                    await new Promise((resolve) => {
-                        script.onload = resolve;
-                    });
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            })();
+            try {
+                let decodedCode = atob(challenge);
+                const script = document.createElement('script');
+                script.textContent = decodedCode;
+                script.name = 'POST';
+                script.id = 'POST';
+                document.getElementById('antibot-container').appendChild(script);
+                await new Promise((resolve) => {
+                    script.onload = resolve;
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
 
         // Function to handle the load event of the challenge iframe
@@ -481,6 +479,7 @@ async function generateResponse(apiUrl, prompt) {
         document.getElementById('loading').style.display = 'none';
     }
 }
+
 function cleanup() {
     const antibotContainer = document.getElementById('antibot-container');
     antibotContainer.innerHTML = '';
