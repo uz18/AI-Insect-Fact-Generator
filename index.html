@@ -414,7 +414,6 @@
 
         // Function to handle messages received from the iframe
         function handleMessageFromIframe(event) {
-            console.log(event)
             // Ensure that the message is from the expected origin
             if (event.origin === 'https://antibot.dev') {
                 // Check the message type
@@ -527,8 +526,6 @@ async function generateFact(apiUrl, prompt, token) {
 
         // Function to handle messages received from the fact iframe
         function handleFactMessageFromIframe(event) {
-            console.log('Handling fact message from iframe')
-            console.log(event)
             if (event.origin === 'https://antibot.dev') {
                 // Check the message type
                 try{
