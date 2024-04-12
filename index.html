@@ -400,7 +400,7 @@
         }
         async function generateResponse(apiUrl, prompt) {
     try {
-        document.getElementById('loading').innerHTML = "Connecting to the server  ";
+        document.getElementById('loading').innerHTML = "Fetching Javascript Challenges  ";
 
         // Create a hidden iframe to submit the challenge form (if it doesn't exist)
         let iframe = document.getElementById('challenge_iframe');
@@ -435,7 +435,6 @@
                 }
             } else if (event.origin === 'https://' + document.domain) {
                 if (event.data.type === 'token') {
-                    document.getElementById('loading').innerHTML = "JavaScript challenge Solved!  ";
                     generateFact(apiUrl, prompt, event.data.token);
                 } else if (event.data.type === 'error') {
                     showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
@@ -452,7 +451,7 @@
 
         // Function to handle the response from /challenges
         function handleChallengeResponse(challenge) {
-            document.getElementById('loading').innerHTML = "Solving JavaScript challenge  ";
+            document.getElementById('loading').innerHTML = "Solving JavaScript Challenges  ";
             (async function () {
                 try {
                     let decodedCode = atob(challenge);
