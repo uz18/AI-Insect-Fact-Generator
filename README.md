@@ -1,7 +1,7 @@
 # AI-Insect-Fact-Generator (Client)
 Webpage which uses the Hugging Face and Pixabay API to create a unique insect fact, infer the insect name from the generated fact, and find a real image to go alongside it
 
-# [https://uz18.github.io/AI-Insect-Fact-Generator](https://uz18.github.io/AI-Insect-Fact-Generator)
+### [https://uz18.github.io/AI-Insect-Fact-Generator](https://uz18.github.io/AI-Insect-Fact-Generator)
 
 Please note that the actual logic is handled on a separate web server in an attempt to mask my API keys. 
 Keep in mind that this may add some time to your initial request during periods of inactivity
