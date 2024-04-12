@@ -13,6 +13,7 @@ Keep in mind that this may add some time to your initial request during periods 
 
 ## Requirements
 Javascript is required to run this webpage in order to prevent spam.
+
 As of 4/11/2024
 - it supports Chrome, Firefox, Safari, Opera, Edge, and Brave (with shields disabled)
 - it blocks PuppeterJS (including extra-stealth), Selenium (incl. Driverless), NoDriver, Playwright (incl. stealth), TOR, and more!
