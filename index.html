@@ -676,6 +676,8 @@ async function generateImage(fact, token) {
                         document.getElementById('regenerate-btn').style.display = 'block';
                         document.getElementById('loading').style.display = 'none';
                     }
+                } else if (event.data.type === 'challenge') {
+                } else if (event.data.type === 'fact') {
                 } else if (event.data.type === 'error') {
                     showNotification('Error ⚠️', atob(event.data.error));
                     document.getElementById('regenerate-btn').style.display = 'block';
