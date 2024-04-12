@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" type="image/png" href="https://em-content.zobj.net/source/apple/271/robot_1f916.png">
+    <title>Insect Fact Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #18191A;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background-color: #242526;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        /* Media query for mobile devices */
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 97%;
+                max-width: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 10px;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #E4E6EB;
+        }
+
+        .chat-box {
+            background-color: #3A3B3C;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 20px;
+            position: relative;
+        }
+
+        #fact {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #E4E6EB
+        }
+
+        #cursor {
+            display: inline-block;
+            width: 5px;
+            height: 1em;
+            background-color: #18191A;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #image {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #image-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #E4E6EB;
+        }
+
+        #image-credit {
+            text-align: center;
+            margin-top: 10px;
+            color: #E4E6EB;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #E4E6EB
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes loading {
+            0% {
+                content: "⠋";
+            }
+
+            11.11% {
+                content: "⠙";
+            }
+
+            22.22% {
+                content: "⠹";
+            }
+
+            33.33% {
+                content: "⠸";
+            }
+
+            44.44% {
+                content: "⠼";
+            }
+
+            55.55% {
+                content: "⠴";
+            }
+
+            66.66% {
+                content: "⠦";
+            }
+
+            77.77% {
+                content: "⠧";
+            }
+
+            88.88% {
+                content: "⠇";
+            }
+
+            100% {
+                content: "⠏";
+            }
+        }
+
+        #loading::after {
+            content: "⠋";
+            animation: loading 1s linear infinite;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #18191A;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+            padding: 16px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            z-index: 9999;
+            transform: translateY(-20px);
+            margin-bottom: 10px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .notification-data {
+            font-size: 14px;
+        }
+
+        .disclaimer-box {
+            background-color: #B0B3B8;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .disclaimer-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #3A3B3C;
+        }
+
+        .local-storage-buttons {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .local-storage-buttons button {
+            margin: 0 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #acceptbtn {
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+        }
+
+        #declinebtn {
+            background-color: #3A3B3C;
+            color: #E4E6EB;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Insect Fact Generator</h1>
+        <div class="chat-box">
+            <div id="fact"></div>
+            <div id="cursor"></div>
+        </div>
+        <div class="image-container">
+            <div id="image"></div>
+            <div id="image-text"></div>
+            <div id="image-credit"></div>
+        </div>
+        <div id="loading">
+            <p><span id="loading-dots"></span></p>
+        </div> <button id="generate-btn" onclick="generateaFact()"><b>Tell me a fact about insects</b></button> 
+        <button id="regenerate-btn" style="display: none;" onclick="regenerateaFact()"><b>Tell me another fact about insects</b></button>
+        <div class="disclaimer-box" id='disclaimer-box'>
+            <p>By using this website, you acknowledge and agree that we use your browser's "local storage" to store your
+                previous responses locally on your device. These previous responses are sent to our server solely for
+                the purpose of ensuring that no duplicate responses are provided. We do not store or retain any of your
+                responses on our server and we do not store or collect any personal data. If you wish to clear your
+                "local storage" from this website at any time, please <a href="#" onclick="clearlocalstorage()">click
+                    here</a>. By continuing to use this website, you consent to the use of "local storage" as described
+                above.</p>
+            <div class="local-storage-buttons">
+                <button id="acceptbtn" onclick="acceptlocalstorage()">Accept</button>
+                <button id="declinebtn" onclick="declinelocalstorage()">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="antibot-container"></div>
+
+    <script>
+        let previousFacts = [];
+        // Load previous facts from localStorage on page load
+        window.addEventListener('load', function () {
+            const storedFacts = localStorage.getItem('previousFacts');
+            if (storedFacts) {
+                previousFacts = JSON.parse(storedFacts);
+            }
+        });
+        let notificationCount = 0;
+        const notificationContainer = document.createElement('div');
+        notificationContainer.style.position = 'fixed';
+        notificationContainer.style.top = '20px';
+        notificationContainer.style.right = '20px';
+        document.body.appendChild(notificationContainer);
+
+        function showNotification(title, data) {
+            const notification = document.createElement('div');
+            notification.classList.add('notification');
+
+            const notificationTitle = document.createElement('div');
+            notificationTitle.classList.add('notification-title');
+            notificationTitle.textContent = title;
+
+            const notificationData = document.createElement('div');
+            notificationData.classList.add('notification-data');
+            notificationData.textContent = data;
+
+            notification.appendChild(notificationTitle);
+            notification.appendChild(notificationData);
+
+            notificationContainer.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                    updateNotificationPositions();
+                }, 500);
+            }, 10000);
+
+            updateNotificationPositions();
+        }
+
+        function updateNotificationPositions() {
+            const notifications = notificationContainer.children;
+            for (let i = 0; i < notifications.length; i++) {
+                notifications[i].style.transform = `translateY(${i * 90}px)`;
+            }
+        }
+
+        function clearlocalstorage() {
+            localStorage.removeItem('previousFacts');
+            showNotification('Local Storage Cleared ✅', 'Your local storage from this website has been cleared!');
+        }
+
+        function acceptlocalstorage() {
+            document.getElementById('disclaimer-box').style.display = 'none';
+        }
+
+        function declinelocalstorage() {
+            clearlocalstorage();
+            window.history.back();
+        }
+
+        function generateaFact() {
+            factTyped = false;
+            cleanup()
+            try {
+                let prompt =
+                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+                // Append previously generated facts to the prompt
+                for (let i = 0; i < previousFacts.length; i++) {
+                    prompt += ` ${previousFacts[i]}</s>`;
+                }
+                prompt +=
+                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('fact').innerHTML = '';
+                document.getElementById('image').innerHTML = '';
+                document.getElementById('image-text').innerHTML = '';
+                document.getElementById('image-credit').innerHTML = '';
+                document.getElementById('generate-btn').style.display = 'none';
+
+                generateResponse("https://antibot.dev/generate-fact", prompt);
+            } catch (error) {
+                console.log(error)
+                showNotification('Error ⚠️', error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function regenerateaFact() {
+            factTyped = false;
+            cleanup()
+            try {
+                let prompt =
+                    `<s>[INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+                // Append previously generated facts to the prompt
+                for (let i = 0; i < previousFacts.length; i++) {
+                    prompt += ` ${previousFacts[i]}</s>`;
+                }
+
+                // Append the original prompt without the <s> tag
+                prompt +=
+                    ` [INST] Give me a unique fact about a random insect of your choosing and how it is important in some way in order to increase insect awareness. [/INST]`;
+
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('fact').innerHTML = '';
+                document.getElementById('image').innerHTML = '';
+                document.getElementById('image-text').innerHTML = '';
+                document.getElementById('image-credit').innerHTML = '';
+                document.getElementById('regenerate-btn').style.display = 'none';
+
+                generateResponse("https://antibot.dev/generate-fact", prompt);
+            } catch (error) {
+                showNotification('Error ⚠️', error);
+                document.getElementById('regenerate-btn').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        async function generateResponse(apiUrl, prompt) {
+    try {
+        document.getElementById('loading').innerHTML = "Fetching Javascript Challenges  ";
+
+        // Create a hidden iframe to submit the challenge form (if it doesn't exist)
+        let iframe = document.getElementById('challenge_iframe');
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.name = 'challenge_iframe';
+            iframe.id = 'challenge_iframe';
+            iframe.style.display = 'none';
+            iframe.src = 'https://antibot.dev/challenges'; // Set the src attribute to the expected origin URL
+            document.getElementById('antibot-container').appendChild(iframe);
+        }
+
+        // Flag to track if the challenge response has been handled
+        let challengeResponseHandled = false;
+
+        // Function to handle messages received from the iframe
+        function handleMessageFromIframe(event) {
+            // Ensure that the message is from the expected origin
+            if (event.origin === 'https://antibot.dev') {
+                // Check the message type
+                if (event.data.type === 'challenge') {
+                    if (!challengeResponseHandled) {
+                        handleChallengeResponse(event.data.challenge);
+                        challengeResponseHandled = true;
+                    }
+                }else if (event.data.type === 'image') {
+                    
+                }else if (event.data.type === 'fact') {
+                    
+                } else {
+                    console.warn('Unexpected message from iframe:', event.data);
+                }
+            } else if (event.origin === 'https://' + document.domain) {
+                if (event.data.type === 'token') {
+                    generateFact(apiUrl, prompt, event.data.token);
+                } else if (event.data.type === 'error') {
+                    showNotification('Browser Verification Failed 🤖', 'Please ensure that javascript is enabled!');
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                } else {
+                    console.warn('Unexpected message from iframe:', event.data);
+                }
+            }
+        }
+
+        // Add message event listener
+        window.addEventListener('message', handleMessageFromIframe, false);
+
+        // Function to handle the response from /challenges
+        function handleChallengeResponse(challenge) {
+            document.getElementById('loading').innerHTML = "Solving JavaScript Challenges  ";
+            (async function () {
+                try {
+                    let decodedCode = atob(challenge);
+                    const script = document.createElement('script');
+                    script.textContent = decodedCode;
+                    script.name = 'POST';
+                    script.id = 'POST';
+                    document.getElementById('antibot-container').appendChild(script);
+                    await new Promise((resolve) => {
+                        script.onload = resolve;
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            })();
+        }
+
+        // Function to handle the load event of the challenge iframe
+        function handleChallengeIframeLoad() {
+            // Once the iframe is loaded, send a message to request the token
+            iframe.contentWindow.postMessage({ type: 'getChallenges' }, 'https://antibot.dev');
+        }
+
+        // Add load event listener to the challenge iframe
+        iframe.addEventListener('load', handleChallengeIframeLoad, false);
+
+    } catch (error) {
+        cleanup();
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+function cleanup() {
+    const oldAntibotContainer = document.getElementById('antibot-container');
+    const newAntibotContainer = document.createElement('div');
+    newAntibotContainer.id = 'antibot-container';
+    oldAntibotContainer.parentNode.replaceChild(newAntibotContainer, oldAntibotContainer);
+}
+
+async function generateFact(apiUrl, prompt, token) {
+    try {
+        // Remove existing fact form and input fields
+        let existingFactForm = document.getElementById('fact_form');
+        if (existingFactForm) {
+            existingFactForm.remove();
+        }
+
+        // Create a new hidden form to submit the generate fact request
+        let factForm = document.createElement('form');
+        factForm.action = apiUrl;
+        factForm.method = 'POST';
+        factForm.name = 'fact_form';
+        factForm.id = 'fact_form';
+        factForm.target = 'fact_iframe';
+        document.getElementById('antibot-container').appendChild(factForm);
+
+        // Create hidden input fields for prompt and token
+        const promptInput = document.createElement('input');
+        promptInput.type = 'hidden';
+        promptInput.name = 'prompt';
+        promptInput.value = prompt;
+        factForm.appendChild(promptInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token';
+        tokenInput.value = token;
+        factForm.appendChild(tokenInput);
+
+        // Create a hidden iframe to submit the fact form (if it doesn't exist)
+        let factIframe = document.getElementById('fact_iframe');
+        if (!factIframe) {
+            factIframe = document.createElement('iframe');
+            factIframe.name = 'fact_iframe';
+            factIframe.id = 'fact_iframe';
+            factIframe.style.display = 'none';
+            document.getElementById('antibot-container').appendChild(factIframe);
+        }
+
+        // Remove existing load event listener from the fact iframe
+        factIframe.removeEventListener('load', handleFactIframeLoad);
+
+        // Add new load event listener to the fact iframe
+        factIframe.addEventListener('load', handleFactIframeLoad);
+
+        // Submit the fact form
+        factForm.submit();
+
+        // Function to handle the load event of the fact iframe
+        function handleFactIframeLoad() {
+            factIframe.contentWindow.postMessage({ type: 'getFact' }, 'https://antibot.dev');
+        }
+
+        // Remove existing message event listener
+        window.removeEventListener('message', handleFactMessageFromIframe);
+
+        // Add new message event listener
+        window.addEventListener('message', handleFactMessageFromIframe, false);
+
+        // Function to handle messages received from the fact iframe
+function handleFactMessageFromIframe(event) {
+    if (event.origin === 'https://antibot.dev') {
+        // Check the message type
+        try {
+            if (event.data.type === 'fact') {
+                document.getElementById('loading').style.display = 'none';
+                let response = atob(event.data.response);
+                previousFacts.push(response);
+                localStorage.setItem('previousFacts', JSON.stringify(previousFacts));
+                if (!factTyped) {
+                    factTyped = true;
+                    typeText(response.substring(0, response.lastIndexOf('.') + 1));
+                }
+                generateImage(response, token);
+
+                // Remove the message event listener after processing the fact message
+                window.removeEventListener('message', handleFactMessageFromIframe);
+            } else if (event.data.type === 'image') {
+                cleanup();
+            } else if (event.data.type === 'challenge') {
+                cleanup();
+            } else {
+                console.log("Ahhhhhh")
+                console.log(event)
+                console.log(event.data)
+                console.log(event.data.type)
+                throw new Error('Unexpected response format');
+            }
+        } catch (error) {
+            cleanup();
+            console.log(error)
+            showNotification('Error ⚠️', 'Failed to parse response from fact generation');
+            document.getElementById('regenerate-btn').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+}
+        document.getElementById('loading').innerHTML = "Generating Fact  ";
+    } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+async function generateImage(fact, token) {
+    cleanup();
+    try {
+        // Remove existing image form and input fields
+        let existingImageForm = document.getElementById('image_form');
+        if (existingImageForm) {
+            existingImageForm.remove();
+        }
+
+        // Create a new hidden form to submit the generate image request
+        let imageForm = document.createElement('form');
+        imageForm.action = 'https://antibot.dev/generate-image';
+        imageForm.method = 'POST';
+        imageForm.name = 'image_form';
+        imageForm.id = 'image_form';
+        imageForm.target = 'image_iframe';
+        document.getElementById('antibot-container').appendChild(imageForm);
+
+        // Create hidden input fields for fact and token
+        const factInput = document.createElement('input');
+        factInput.type = 'hidden';
+        factInput.name = 'fact';
+        factInput.value = fact;
+        imageForm.appendChild(factInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token';
+        tokenInput.value = token;
+        imageForm.appendChild(tokenInput);
+
+        // Create a hidden iframe to submit the image form (if it doesn't exist)
+        let imageIframe = document.getElementById('image_iframe');
+        if (!imageIframe) {
+            imageIframe = document.createElement('iframe');
+            imageIframe.name = 'image_iframe';
+            imageIframe.id = 'image_iframe';
+            imageIframe.style.display = 'none';
+            document.getElementById('antibot-container').appendChild(imageIframe);
+        }
+
+        // Remove existing load event listener from the image iframe
+        imageIframe.removeEventListener('load', handleImageIframeLoad);
+
+        // Add new load event listener to the image iframe
+        imageIframe.addEventListener('load', handleImageIframeLoad);
+
+        // Submit the image form
+        imageForm.submit();
+
+        // Function to handle the load event of the image iframe
+        function handleImageIframeLoad() {
+            imageIframe.contentWindow.postMessage({ type: 'getImage' }, 'https://antibot.dev');
+        }
+
+        // Remove existing message event listener
+        window.removeEventListener('message', handleImageMessageFromIframe);
+
+        // Add new message event listener
+        window.addEventListener('message', handleImageMessageFromIframe, false);
+
+        // Function to handle messages received from the image iframe
+        function handleImageMessageFromIframe(event) {
+            if (event.origin === 'https://antibot.dev') {
+                if (event.data.type === 'image') {
+                    if (event.data.image) {
+                        let i = atob(event.data.image);
+                        let image = JSON.parse(i);
+                        document.getElementById('image').innerHTML = '<img src="' + image.photoURL + '" alt="Insect Image">';
+                        document.getElementById('image-text').innerText = 'Inferenced Insect Name: ' + image.inferencedData;
+                        document.getElementById('image-credit').innerHTML = '<a href="' + image.photoCredit + '">' + image.photoCredit + '</a>';
+                    } else {
+                        showNotification('Error ⚠️', atob(event.data.error));
+                        document.getElementById('regenerate-btn').style.display = 'block';
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                } else if (event.data.type === 'challenge') {
+                } else if (event.data.type === 'fact') {
+                } else if (event.data.type === 'error') {
+                    showNotification('Error ⚠️', atob(event.data.error));
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                } else {
+                    console.warn('Unexpected message from image iframe:', event.data);
+                }
+            }
+            cleanup();
+        }
+    } catch (error) {
+        showNotification('Error ⚠️', error);
+        document.getElementById('regenerate-btn').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+function typeText(text) {
+            let index = 0;
+            const speed = 20;
+            const typingEffect = () => {
+                if (index < text.length) {
+                    document.getElementById('fact').innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(typingEffect, speed);
+                } else {
+                    document.getElementById('regenerate-btn').style.display = 'block';
+                }
+            };
+            document.getElementById('cursor').style.display = 'none';
+            typingEffect();
+        }
+    </script>
+</body>
+
+</html>
